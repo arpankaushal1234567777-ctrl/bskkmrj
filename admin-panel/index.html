@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BSKKMRJ Admin – Sign In</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/admin.css" />
+</head>
+<body class="admin-bg">
+  <main class="auth-shell">
+    <section class="auth-card">
+      <header class="auth-header">
+        <div class="auth-logo">BSKKMRJ Admin</div>
+        <p class="auth-sub">Secure access for administrators only.</p>
+      </header>
+
+      <form id="loginForm" class="form" autocomplete="off">
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" required placeholder="admin@example.com" />
+        </label>
+        <label>
+          <span>Password</span>
+          <input type="password" name="password" required minlength="6" placeholder="••••••••" />
+        </label>
+        <button type="submit" class="btn btn-primary">Sign in</button>
+        <p id="loginError" class="form-error" hidden></p>
+      </form>
+
+      <footer class="auth-footer">
+        <p>Powered by BSKKMRJ CMS</p>
+      </footer>
+    </section>
+  </main>
+
+  <script src="./js/admin-api.js"></script>
+  <script src="./js/login.js"></script>
+</body>
+</html>
