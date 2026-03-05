@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## BSKKMRJ Rajasthan Project
 
 Full-stack implementation of the BSKKMRJ website with:
@@ -56,3 +57,6 @@ Full-stack implementation of the BSKKMRJ website with:
 - `GET /api/about`, `GET /api/contact` – structured content for about + contact.
 
 The public frontend pages are already wired with the official BSKKMRJ text; you can progressively switch sections to consume live data from the API (news/events/gallery/team) if desired.***
+=======
+this is my secoond commit 
+>>>>>>> 97d3a0d12a3d0292ef3ff23aa577a30d101f15fa
