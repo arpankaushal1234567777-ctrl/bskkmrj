@@ -5,7 +5,7 @@ const { connectDb } = require("../config/db");
 
 async function ensureAdminSeeded() {
   await connectDb();
-  const adminEmail = process.env.ADMIN_EMAIL || "admin@example.com";
+  const adminEmail = process.env.ADMIN_EMAIL || "admin@gmail.com";
   const existing = await User.findOne({ email: adminEmail });
   if (existing) return;
   const password = process.env.ADMIN_PASSWORD || "ChangeMe123!";

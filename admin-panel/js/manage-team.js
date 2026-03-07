@@ -149,5 +149,48 @@
   } else {
     refresh();
   }
+
+  // NATIONAL SEARCH
+const nationalSearch = document.getElementById("searchNational");
+
+if(nationalSearch){
+
+nationalSearch.addEventListener("input", function(){
+
+const value = this.value.toLowerCase();
+
+const filtered = national.filter(m =>
+(m.name || "").toLowerCase().includes(value)
+);
+
+national = filtered;
+
+render();
+
+});
+
+}
+
+
+// STATE SEARCH
+const stateSearch = document.getElementById("searchState");
+
+if(stateSearch){
+
+stateSearch.addEventListener("input", function(){
+
+const value = this.value.toLowerCase();
+
+const filtered = state.filter(m =>
+(m.name || "").toLowerCase().includes(value)
+);
+
+state = filtered;
+
+render();
+
+});
+
+}
 })();
 

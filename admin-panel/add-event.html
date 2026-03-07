@@ -48,6 +48,11 @@
             <span>Location (optional)</span>
             <input type="text" id="eventLocation" />
           </label>
+          <label>
+          <span>Upload Event Image</span>
+          <input type="file" id="eventImage">
+          <img id="eventPreview" style="max-width:120px;margin-top:10px;">
+          </label>
           <div class="form-actions">
             <button type="submit" class="btn btn-primary" id="eventSaveBtn">Save</button>
             <button type="button" class="btn btn-secondary" id="eventResetBtn">Reset</button>
@@ -60,6 +65,9 @@
         <header class="admin-section-header">
           <h2>Existing Events</h2>
         </header>
+
+        <input type="text" id="searchBox" placeholder="Search news..." class="admin-search">
+
         <div id="eventTable" class="table-shell"></div>
       </section>
     </main>
@@ -67,5 +75,67 @@
 
   <script src="./js/admin-api.js"></script>
   <script src="./js/manage-events.js"></script>
+
+ <!-- <script>
+
+function preview(input, target){
+
+const file = input.files[0];
+
+if(!file) return;
+
+const reader = new FileReader();
+
+reader.onload = function(e){
+document.getElementById(target).src = e.target.result;
+}
+
+reader.readAsDataURL(file);
+
+}
+
+document.getElementById("newsImage")?.addEventListener("change",function(){
+preview(this,"newsPreview");
+});
+
+document.getElementById("eventImage")?.addEventListener("change",function(){
+preview(this,"eventPreview");
+});
+
+document.getElementById("galleryImage")?.addEventListener("change",function(){
+preview(this,"galleryPreview");
+});
+
+document.getElementById("teamPhoto")?.addEventListener("change",function(){
+preview(this,"teamPreview");
+});
+
+</script> --> 
+
+
+<script>
+
+document.querySelectorAll("input[type=file]").forEach(input=>{
+
+input.addEventListener("dragover",e=>{
+e.preventDefault();
+input.style.border="2px dashed #007bff";
+});
+
+input.addEventListener("dragleave",()=>{
+input.style.border="";
+});
+
+input.addEventListener("drop",e=>{
+
+e.preventDefault();
+
+input.files = e.dataTransfer.files;
+
+});
+
+});
+
+</script>
 </body>
 </html>

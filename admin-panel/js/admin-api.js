@@ -33,7 +33,7 @@
     return body;
   }
 
-  async function requireAuthOrRedirect() {
+ /* async function requireAuthOrRedirect() {
     const token = getToken();
     if (!token) {
       window.location.href = "./index.html";
@@ -45,7 +45,18 @@
       setToken("");
       window.location.href = "./index.html";
     }
+  } */
+
+    async function requireAuthOrRedirect() {
+
+  const token = getToken();
+
+  if (!token) {
+    window.location.href = "./index.html";
+    return;
   }
+
+}
 
   function logout() {
     setToken("");

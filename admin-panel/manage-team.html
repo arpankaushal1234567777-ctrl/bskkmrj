@@ -11,7 +11,7 @@
   <div class="admin-layout">
     <aside class="admin-sidebar">
       <div class="sidebar-header">
-        <div className="sidebar-logo">BSKKMRJ Admin</divName=>
+        <div class="sidebar-logo">BSKKMRJ Admin</div>
         <button id="sidebarToggle" class="sidebar-toggle" type="button">☰</button>
       </div>
       <nav class="sidebar-nav">
@@ -51,6 +51,40 @@
             <span>Role</span>
             <input type="text" id="teamRole" required />
           </label>
+          <label>
+          <span>Upload Photo</span>
+          <input type="file" id="teamPhoto">
+          <img id="teamPreview" style="max-width:120px;margin-top:10px;">
+          </label>
+          <label>
+          <span>Email</span>
+          <input type="email" id="teamEmail">
+          </label>
+
+          <label>
+          <span>Phone</span>
+          <input type="text" id="teamPhone">
+          </label>
+
+          <label>
+          <span>Facebook</span>
+          <input type="url" id="teamFacebook">
+          </label>
+
+          <label>
+          <span>Instagram</span>
+          <input type="url" id="teamInstagram">
+          </label>
+
+          <label>
+          <span>LinkedIn</span>
+          <input type="url" id="teamLinkedin">
+          </label>
+
+          <label>
+          <span>Bio</span>
+          <textarea id="teamBio"></textarea>
+          </label>
           <div class="form-actions">
             <button type="submit" class="btn btn-primary" id="teamSaveBtn">Save</button>
             <button type="button" class="btn btn-secondary" id="teamResetBtn">Reset</button>
@@ -63,6 +97,9 @@
         <header class="admin-section-header">
           <h2>National Team</h2>
         </header>
+
+        <input type="text" id="searchNational" placeholder="Search national team..." class="admin-search">
+
         <div id="nationalTeamTable" class="table-shell"></div>
       </section>
 
@@ -70,6 +107,9 @@
         <header class="admin-section-header">
           <h2>State Team</h2>
         </header>
+
+        <input type="text" id="searchState" placeholder="Search state team..." class="admin-search">
+
         <div id="stateTeamTable" class="table-shell"></div>
       </section>
     </main>
@@ -77,5 +117,41 @@
 
   <script src="./js/admin-api.js"></script>
   <script src="./js/manage-team.js"></script>
+
+ <script>
+
+function preview(input, target){
+
+const file = input.files[0];
+
+if(!file) return;
+
+const reader = new FileReader();
+
+reader.onload = function(e){
+document.getElementById(target).src = e.target.result;
+}
+
+reader.readAsDataURL(file);
+
+}
+
+document.getElementById("newsImage")?.addEventListener("change",function(){
+preview(this,"newsPreview");
+});
+
+document.getElementById("eventImage")?.addEventListener("change",function(){
+preview(this,"eventPreview");
+});
+
+document.getElementById("galleryImage")?.addEventListener("change",function(){
+preview(this,"galleryPreview");
+});
+
+document.getElementById("teamPhoto")?.addEventListener("change",function(){
+preview(this,"teamPreview");
+});
+
+</script>
 </body>
 </html>

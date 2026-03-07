@@ -11,12 +11,16 @@
   const resetBtn = document.getElementById("newsResetBtn");
 
   let rows = [];
+  
+  let originalRows = [];
 
   async function refresh() {
     await window.BSKKMRJ_ADMIN.requireAuthOrRedirect();
     window.BSKKMRJ_ADMIN.wireLogout();
     const data = await window.BSKKMRJ_ADMIN.api("/api/news");
     rows = data.news || [];
+    originalRows = [...rows];
+
     renderTable();
   }
 
@@ -76,6 +80,27 @@
       });
     });
   }
+
+  // NEWS SEARCH FILTER
+const searchBox = document.getElementById("searchBox");
+
+if(searchBox){
+
+searchBox.addEventListener("input", function(){
+
+const value = this.value.toLowerCase();
+
+rows = originalRows.filter(n =>
+(n.title || "").toLowerCase().includes(value)
+);
+
+
+
+renderTable();
+
+});
+
+}
 
   function resetForm() {
     idInput.value = "";

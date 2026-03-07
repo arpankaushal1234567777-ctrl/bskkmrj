@@ -1,6 +1,6 @@
 function getContact(_req, res) {
   res.json({
-    organization: "भारतीय श्रमिक कामगार कर्मचारी महासंघ",
+    organization: "भारतीय श्रमिक कामगार कर्मचारी महासंघ राजस्थान",
     phone: "+919451238931",
     footerPhone: "01147095426",
     address:

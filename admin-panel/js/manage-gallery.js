@@ -132,5 +132,26 @@
   } else {
     refresh();
   }
+
+  // GALLERY SEARCH
+const searchBox = document.getElementById("searchBox");
+
+if(searchBox){
+
+searchBox.addEventListener("input", function(){
+
+const value = this.value.toLowerCase();
+
+const filtered = rows.filter(g =>
+(g.title || "").toLowerCase().includes(value)
+);
+
+rows = filtered;
+
+renderTable();
+
+});
+
+}
 })();
 

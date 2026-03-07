@@ -199,3 +199,12 @@ tbody tr:nth-child(even){
     flex-direction:column;
   }
 }
+
+.admin-search{
+width:100%;
+padding:10px;
+margin:15px 0;
+border-radius:6px;
+border:1px solid #ccc;
+font-size:14px;
+}

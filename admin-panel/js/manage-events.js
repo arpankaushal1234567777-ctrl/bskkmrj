@@ -132,5 +132,26 @@
   } else {
     refresh();
   }
+
+  // EVENTS SEARCH
+const searchBox = document.getElementById("searchBox");
+
+if(searchBox){
+
+searchBox.addEventListener("input", function(){
+
+const value = this.value.toLowerCase();
+
+const filtered = rows.filter(e =>
+(e.title || "").toLowerCase().includes(value)
+);
+
+rows = filtered;
+
+renderTable();
+
+});
+
+}
 })();
 

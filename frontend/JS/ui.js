@@ -4,7 +4,7 @@
       <div class="container nav-container">
         <a class="logo" data-nav="home" href="#">
           <span class="logo-mark">BSKKMRJ</span>
-          <span class="logo-sub">भारतीय श्रमिक कामगार कर्मचारी महासंघ</span>
+          <span class="logo-sub">भारतीय श्रमिक कामगार कर्मचारी महासंघ राजस्थान</span>
         </a>
         <button class="menu-toggle" id="menuToggle" type="button" aria-label="Toggle menu" aria-expanded="false">☰</button>
         <nav class="nav" aria-label="Primary">
@@ -44,7 +44,7 @@
       </div>
       <div class="container footer-grid">
         <div>
-          <h3>Join the Bskkm</h3>
+          <h3>Join the Bskkmrj</h3>
           <p class="muted">Together we the people achieve more than any single person could ever do alone.</p>
           <div class="footer-contact">
             <div><strong>Phone:</strong> 01147095426</div>
