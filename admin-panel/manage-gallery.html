@@ -76,7 +76,7 @@
   <script src="./js/admin-api.js"></script>
   <script src="./js/manage-gallery.js"></script>
 
- <script>
+ <!--<script>
 
 function preview(input, target){
 
@@ -108,6 +108,31 @@ preview(this,"galleryPreview");
 
 document.getElementById("teamPhoto")?.addEventListener("change",function(){
 preview(this,"teamPreview");
+});
+
+</script> -->
+
+<script>
+
+document.querySelectorAll("input[type=file]").forEach(input=>{
+
+input.addEventListener("dragover",e=>{
+e.preventDefault();
+input.style.border="2px dashed #007bff";
+});
+
+input.addEventListener("dragleave",()=>{
+input.style.border="";
+});
+
+input.addEventListener("drop",e=>{
+
+e.preventDefault();
+
+input.files = e.dataTransfer.files;
+
+});
+
 });
 
 </script>

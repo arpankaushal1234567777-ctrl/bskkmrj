@@ -77,7 +77,7 @@
   <script src="./js/admin-api.js"></script>
   <script src="./js/manage-news.js"></script>
 
-  <script>
+ <!-- <script>
 
 function previewImage(input){
 
@@ -110,6 +110,31 @@ document.querySelectorAll("input[type=file]").forEach(input => {
 input.addEventListener("change", function(){
 
 previewImage(this);
+
+});
+
+});
+
+</script> -->
+
+<script>
+
+document.querySelectorAll("input[type=file]").forEach(input=>{
+
+input.addEventListener("dragover",e=>{
+e.preventDefault();
+input.style.border="2px dashed #007bff";
+});
+
+input.addEventListener("dragleave",()=>{
+input.style.border="";
+});
+
+input.addEventListener("drop",e=>{
+
+e.preventDefault();
+
+input.files = e.dataTransfer.files;
 
 });
 
