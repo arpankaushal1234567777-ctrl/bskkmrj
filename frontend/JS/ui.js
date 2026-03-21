@@ -3,8 +3,11 @@
     <header class="navbar">
       <div class="container nav-container">
         <a class="logo" data-nav="home" href="#">
-          <span class="logo-mark">BSKKMRJ</span>
-          <span class="logo-sub">भारतीय श्रमिक कामगार कर्मचारी महासंघ राजस्थान</span>
+          <img src="../assets/images/LOGO.jpeg" alt="BSKKMRJ Logo">
+          <div class="logo-text">
+            <span class="logo-mark">BSKKMRJ</span>
+            <span class="logo-sub">भारतीय श्रमिक कामगार कर्मचारी महासंघ राजस्थान</span>
+          </div>
         </a>
         <button class="menu-toggle" id="menuToggle" type="button" aria-label="Toggle menu" aria-expanded="false">☰</button>
         <nav class="nav" aria-label="Primary">
@@ -71,7 +74,7 @@
       </div>
       <div class="footer-bottom">
         <div class="container footer-bottom-inner">
-          <p>© 2024, Techlightz Infosystem All Rights Reserved.</p>
+          <p>||Created By Shashank Sangam © 2026 ||</p>
           <p><a class="link" data-nav="contact" href="#">Get in touch</a></p>
         </div>
       </div>
@@ -154,6 +157,16 @@
         e.preventDefault();
         const li = btn.closest(".dropdown");
         if (!li) return;
+        
+        // Close other dropdowns
+        document.querySelectorAll(".dropdown").forEach((otherLi) => {
+          if (otherLi !== li) {
+            otherLi.classList.remove("open");
+            const otherBtn = otherLi.querySelector(".dropdown-toggle");
+            if(otherBtn) otherBtn.setAttribute("aria-expanded", "false");
+          }
+        });
+
         li.classList.toggle("open");
         btn.setAttribute("aria-expanded", li.classList.contains("open") ? "true" : "false");
       });

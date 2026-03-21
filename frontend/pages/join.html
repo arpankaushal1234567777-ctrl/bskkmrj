@@ -47,33 +47,34 @@
 
         <div class="card">
           <p class="muted small">Please enable JavaScript in your browser to complete this form.</p>
-          <form class="form" onsubmit="return false;">
+          <form class="form" id="joinForm">
             <label>
               <span>Name</span>
-              <input type="text" placeholder="Name" />
+              <input type="text" name="name" placeholder="Name" required />
             </label>
             <label>
               <span>Email</span>
-              <input type="email" placeholder="Email" />
+              <input type="email" name="email" placeholder="Email" required />
             </label>
             <label>
               <span>Phone</span>
-              <input type="tel" placeholder="Phone" />
+              <input type="tel" name="phone" placeholder="Phone" required />
             </label>
             <label>
               <span>Transaction Id</span>
-              <input type="text" placeholder="Transaction Id" />
+              <input type="text" name="transactionId" placeholder="Transaction Id" required />
             </label>
             <label>
               <span>Aadhar Card Upload</span>
-              <input type="file" />
+              <input type="file" name="aadharCard" accept="image/*" required />
             </label>
             <label>
-              <span>PhotoUpload</span>
-              <input type="file" />
+              <span>Photo Upload</span>
+              <input type="file" name="photoUpload" accept="image/*" required />
             </label>
 
-            <button class="btn btn-primary" type="submit">Submit</button>
+            <button class="btn btn-primary" type="submit">Submit Join Request</button>
+            <p id="formFeedback" style="display:none; margin-top:10px; font-weight:600;"></p>
           </form>
         </div>
       </div>
@@ -84,5 +85,33 @@
 
   <script src="../JS/ui.js"></script>
   <script src="../JS/main.js"></script>
+  <script>
+    document.getElementById('joinForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fb = document.getElementById('formFeedback');
+      fb.style.display = 'block';
+      fb.style.color = '#FF6300';
+      fb.textContent = 'Submitting...';
+      try {
+        const formData = new FormData(e.target);
+        const res = await fetch('/api/join', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if(res.ok){
+          fb.style.color = 'green';
+          fb.textContent = 'Message submitted successfully! The admin has been notified.';
+          e.target.reset();
+        } else {
+          fb.style.color = 'red';
+          fb.textContent = 'Error: ' + data.error;
+        }
+      } catch (err) {
+        fb.style.color = 'red';
+        fb.textContent = 'Submission failed. Make sure the backend server relative to this page is running.';
+      }
+    });
+  </script>
 </body>
 </html>

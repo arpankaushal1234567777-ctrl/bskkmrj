@@ -8,7 +8,7 @@
 .loader{display:flex;align-items:center;gap:10px}
 .spinner{
   width:18px;height:18px;border-radius:50%;
-  border:2px solid rgba(255,255,255,.28);
+  border:2px solid rgb(250, 246, 246);
   border-top-color: var(--brand);
   animation:spin .8s linear infinite;
 }

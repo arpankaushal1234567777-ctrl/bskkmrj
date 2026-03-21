@@ -1,35 +1,83 @@
-@media (max-width: 980px){
+@media (max-width: 1024px){
   .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
   .footer-grid{grid-template-columns:1fr 1fr}
+}
+
+@media (max-width: 860px){
+  .nav-links{
+    gap:10px;
+  }
+  .nav-links a{
+    font-size:14px;
+    padding:8px 8px;
+  }
 }
 
 @media (max-width: 720px){
   .grid-2{grid-template-columns:1fr}
   .cards{grid-template-columns:1fr}
   .hero{padding:56px 0 40px}
-  .hero h1{font-size:40px}
+  .hero h1{font-size:36px}
+  .lead{font-size:16px;}
 
   .menu-toggle{display:inline-flex}
-  .nav-links{
-    position:absolute;
-    left:18px;
-    right:18px;
-    top:70px;
-    background:rgba(15,26,46,.98);
-    border:1px solid var(--border);
-    border-radius:16px;
-    padding:10px;
-    display:none;
-    flex-direction:column;
-    align-items:stretch;
-    gap:6px;
-    box-shadow:var(--shadow);
-  }
-  .nav-links.open{display:flex}
-  .nav-links a{padding:12px 12px}
 
-  .dropdown-menu{position:static;display:none;border-radius:12px;margin-top:6px}
+  /* Drawer Navigation for Mobile */
+  .nav-links {
+    position: fixed;
+    top: 0;
+    left: -280px; /* Hidden off-screen by default */
+    width: 280px;
+    height: 100vh;
+    background: var(--bg);
+    border: none;
+    border-right: 1px solid var(--border);
+    border-radius: 0;
+    padding: 80px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    box-shadow: var(--shadow-hover);
+    transition: left 0.4s ease-in-out;
+    z-index: 100;
+  }
+  
+  /* Show drawer when open */
+  .nav-links.open { left: 0; }
+
+  .nav-links a {
+    padding: 12px 14px;
+    width: 100%;
+    font-size: 16px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-links a:last-child {
+    border-bottom: none;
+  }
+
+  /* Overlay pseudo-element when menu is open */
+  body.menu-open::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 90;
+    animation: fadeIn 0.4s forwards;
+  }
+
+  .dropdown-menu{position:static;display:none;border:none;box-shadow:none;border-radius:0;margin-top:6px;padding-left:16px; background:transparent;}
   .dropdown.open>.dropdown-menu{display:block}
 
   .footer-grid{grid-template-columns:1fr}
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
