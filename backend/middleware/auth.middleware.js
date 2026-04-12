@@ -6,7 +6,12 @@ function requireAuth(req, res, next) {
   if (!token) return res.status(401).json({ error: "Missing token" });
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET || "dev-secret");
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      return res.status(500).json({ error: "Server misconfiguration: JWT secret missing" });
+    }
+
+    const payload = jwt.verify(token, secret);
     req.user = payload;
     next();
   } catch (_e) {
@@ -15,4 +20,3 @@ function requireAuth(req, res, next) {
 }
 
 module.exports = { requireAuth };
-

@@ -1,5 +1,5 @@
 (() => {
-  const API_BASE = "http://localhost:5000";
+  const API_BASE = "http://localhost:5001/api";
 
   function getToken() {
     return window.localStorage.getItem("bskkm_admin_token") || "";
@@ -13,8 +13,15 @@
     }
   }
 
+  function buildUrl(path) {
+    const raw = String(path || "");
+    if (raw.startsWith("http")) return raw;
+    const trimmed = raw.startsWith("/api") ? raw.slice(4) : raw;
+    return `${API_BASE}${trimmed.startsWith("/") ? trimmed : `/${trimmed}`}`;
+  }
+
   async function api(path, options = {}) {
-    const url = `${API_BASE}${path}`;
+    const url = buildUrl(path);
     const token = getToken();
     const headers = Object.assign(
       { "Content-Type": "application/json" },
@@ -78,4 +85,3 @@
     wireLogout,
   };
 })();
-

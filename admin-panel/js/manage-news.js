@@ -15,6 +15,9 @@
   let originalRows = [];
 
   async function refresh() {
+    if (tableHost) {
+      tableHost.innerHTML = '<div class="loading"><span class="spinner"></span>Loading news...</div>';
+    }
     await window.BSKKMRJ_ADMIN.requireAuthOrRedirect();
     window.BSKKMRJ_ADMIN.wireLogout();
     const data = await window.BSKKMRJ_ADMIN.api("/api/news");
@@ -158,4 +161,3 @@ renderTable();
     refresh();
   }
 })();
-

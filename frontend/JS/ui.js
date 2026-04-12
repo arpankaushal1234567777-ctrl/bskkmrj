@@ -1,4 +1,29 @@
 (() => {
+  function ensureLangScript() {
+    if (window.BSK_LANG) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "../JS/lang.js";
+      script.onload = () => resolve();
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  function ensureLangToggle() {
+    if (document.getElementById("langToggle")) return;
+    const btn = document.createElement("button");
+    btn.id = "langToggle";
+    btn.type = "button";
+    btn.className = "lang-toggle";
+    btn.textContent = "English";
+    btn.setAttribute("aria-label", "Switch language");
+    document.body.appendChild(btn);
+    if (window.BSK_LANG?.applyCurrent) {
+      window.BSK_LANG.applyCurrent();
+    }
+  }
+
   const NAVBAR_FALLBACK_HTML = `
     <header class="navbar">
       <div class="container nav-container">
@@ -12,26 +37,26 @@
         <button class="menu-toggle" id="menuToggle" type="button" aria-label="Toggle menu" aria-expanded="false">☰</button>
         <nav class="nav" aria-label="Primary">
           <ul class="nav-links" id="navLinks">
-            <li><a data-nav="home" href="#">Home</a></li>
-            <li><a data-nav="about" href="#">About Us</a></li>
+            <li><a data-nav="home" href="#" data-i18n="navHome">Home</a></li>
+            <li><a data-nav="about" href="#" data-i18n="navAbout">About Us</a></li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Media Resources</a>
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false" data-i18n="navMedia">Media Resources</a>
               <ul class="dropdown-menu">
-                <li><a data-nav="gallery" href="#">Photo Gallery</a></li>
-                <li><a data-nav="events" href="#">Event</a></li>
+                <li><a data-nav="gallery" href="#" data-i18n="navGallery">Photo Gallery</a></li>
+                <li><a data-nav="events" href="#" data-i18n="navEvents">Event</a></li>
               </ul>
             </li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Our Team Member</a>
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false" data-i18n="navTeam">Our Team Member</a>
               <ul class="dropdown-menu">
-                <li><a data-nav="stateTeam" href="#">State Team</a></li>
-                <li><a data-nav="nationalTeam" href="#">National Team</a></li>
+                <li><a data-nav="stateTeam" href="#" data-i18n="navStateTeam">State Team</a></li>
+                <li><a data-nav="nationalTeam" href="#" data-i18n="navNationalTeam">National Team</a></li>
               </ul>
             </li>
-            <li><a data-nav="news" href="#">News</a></li>
-            <li><a data-nav="join" href="#">Join Us</a></li>
-            <li><a data-nav="contact" href="#">Contact</a></li>
-            <li class="nav-cta"><a data-nav="donate" class="btn btn-primary btn-sm" href="#">Donate</a></li>
+            <li><a data-nav="news" href="#" data-i18n="navNews">News</a></li>
+            <li><a data-nav="join" href="#" data-i18n="navJoin">Join Us</a></li>
+            <li><a data-nav="contact" href="#" data-i18n="navContact">Contact</a></li>
+            <li class="nav-cta"><a data-nav="donate" class="btn btn-primary btn-sm" href="#" data-i18n="navDonate">Donate</a></li>
           </ul>
         </nav>
       </div>
@@ -47,35 +72,35 @@
       </div>
       <div class="container footer-grid">
         <div>
-          <h3>Join the Bskkmrj</h3>
-          <p class="muted">Together we the people achieve more than any single person could ever do alone.</p>
+          <h3 data-i18n="footerJoin">Join the Bskkmrj</h3>
+          <p class="muted" data-i18n="footerBlurb">Together we the people achieve more than any single person could ever do alone.</p>
           <div class="footer-contact">
-            <div><strong>Phone:</strong> 01147095426</div>
-            <div><strong>Address:</strong> <a class="link" href="https://maps.app.goo.gl/yRtRmDRg8NuPodGg7">84, North Ave, North Avenue Road Area, Raisina Hills, New Delhi, Delhi 110001</a></div>
+            <div><strong data-i18n="footerPhoneLabel">Phone:</strong> 01147095426</div>
+            <div><strong data-i18n="footerAddressLabel">Address:</strong> <a class="link" href="https://maps.app.goo.gl/yRtRmDRg8NuPodGg7">84, North Ave, North Avenue Road Area, Raisina Hills, New Delhi, Delhi 110001</a></div>
           </div>
         </div>
         <div>
-          <h4>Links</h4>
+          <h4 data-i18n="footerLinks">Links</h4>
           <ul class="footer-links">
-            <li><a data-nav="about" href="#">About Us</a></li>
-            <li><a data-nav="join" href="#">Join BSKKMRJ</a></li>
-            <li><a data-nav="gallery" href="#">Gallery</a></li>
-            <li><a data-nav="donate" href="#">Make Donation</a></li>
+            <li><a data-nav="about" href="#" data-i18n="navAbout">About Us</a></li>
+            <li><a data-nav="join" href="#" data-i18n="navJoin">Join BSKKMRJ</a></li>
+            <li><a data-nav="gallery" href="#" data-i18n="navGallery">Gallery</a></li>
+            <li><a data-nav="donate" href="#" data-i18n="navDonate">Make Donation</a></li>
           </ul>
         </div>
         <div>
-          <h4>Headlines</h4>
+          <h4 data-i18n="footerHeadlines">Headlines</h4>
           <ul class="footer-links">
-            <li><span>यूपी के लोहिया हॉस्पिटल में खाली पड़े है बेड, जानें</span></li>
-            <li><span>देश के किसी भी श्रमिक के साथ नही होगा शोषणः</span></li>
-            <li><span>सभी मजदूरों का होगा पंजीकरण: सर्वेश पाठक</span></li>
+            <li><span data-i18n="footerHeadline1">यूपी के लोहिया हॉस्पिटल में खाली पड़े है बेड, जानें</span></li>
+            <li><span data-i18n="footerHeadline2">देश के किसी भी श्रमिक के साथ नही होगा शोषणः</span></li>
+            <li><span data-i18n="footerHeadline3">सभी मजदूरों का होगा पंजीकरण: सर्वेश पाठक</span></li>
           </ul>
         </div>
       </div>
       <div class="footer-bottom">
         <div class="container footer-bottom-inner">
-          <p>||Created By Shashank Sangam © 2026 ||</p>
-          <p><a class="link" data-nav="contact" href="#">Get in touch</a></p>
+          <p class="muted" data-i18n="footerTagline">भारतीय श्रमिक कामगार कर्मचारी महासंघ राजस्थान</p>
+          <p><a class="link" data-nav="contact" href="#" data-i18n="footerContactLink">Get in touch</a></p>
         </div>
       </div>
     </footer>
@@ -131,6 +156,10 @@
       host.innerHTML = fallbackHtml;
       console.warn(e);
     }
+
+    if (window.BSK_LANG?.applyCurrent) {
+      window.BSK_LANG.applyCurrent();
+    }
   }
 
   function wireNavLinks(root = document) {
@@ -146,9 +175,20 @@
     const navLinks = document.getElementById("navLinks");
 
     if (menuToggle && navLinks) {
+      const closeMenu = () => {
+        navLinks.classList.remove("open");
+        menuToggle.setAttribute("aria-expanded", "false");
+        document.body.classList.remove("menu-open");
+      };
+
       menuToggle.addEventListener("click", () => {
         const open = navLinks.classList.toggle("open");
         menuToggle.setAttribute("aria-expanded", String(open));
+        document.body.classList.toggle("menu-open", open);
+      });
+
+      navLinks.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => closeMenu());
       });
     }
 
@@ -174,6 +214,7 @@
   }
 
   async function init() {
+    await ensureLangScript();
     const pathname = normalizePathname(window.location.pathname);
     const isInPublic = pathname.includes("/frontend/public/") || pathname.includes("/public/");
 
@@ -187,6 +228,10 @@
 
     wireNavLinks(document);
     wireNavbarInteractions();
+    ensureLangToggle();
+    if (window.BSK_LANG?.applyCurrent) {
+      window.BSK_LANG.applyCurrent();
+    }
   }
 
   if (document.readyState === "loading") {

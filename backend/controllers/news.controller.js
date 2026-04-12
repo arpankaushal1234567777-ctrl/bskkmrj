@@ -11,10 +11,15 @@ async function listNews(_req, res, next) {
 
 async function createNews(req, res, next) {
   try {
+    const title = String(req.body.title || "").trim();
+    const url = String(req.body.url || "").trim();
+    const excerpt = String(req.body.excerpt || "").trim();
+    if (!title) return res.status(400).json({ error: "Title is required" });
+
     const news = await News.create({
-      title: req.body.title,
-      url: req.body.url,
-      excerpt: req.body.excerpt,
+      title,
+      url,
+      excerpt,
     });
     res.status(201).json(news);
   } catch (err) {
@@ -25,9 +30,13 @@ async function createNews(req, res, next) {
 async function updateNews(req, res, next) {
   try {
     const { id } = req.params;
+    const title = String(req.body.title || "").trim();
+    const url = String(req.body.url || "").trim();
+    const excerpt = String(req.body.excerpt || "").trim();
+    if (!title) return res.status(400).json({ error: "Title is required" });
     const news = await News.findByIdAndUpdate(
       id,
-      { title: req.body.title, url: req.body.url, excerpt: req.body.excerpt },
+      { title, url, excerpt },
       { new: true }
     );
     if (!news) return res.status(404).json({ error: "News not found" });

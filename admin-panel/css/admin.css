@@ -171,8 +171,22 @@ button{font:inherit;}
   border-radius:12px;
   border:1px solid #E5E5E5;
   background:#FFFFFF;
-  overflow:hidden;
+  overflow:auto;
   box-shadow:0 4px 12px rgba(0,0,0,.05);
+}
+.table-empty,.loading{
+  padding:18px;
+  text-align:center;
+  color:#7A7A7A;
+}
+.spinner{
+  width:18px;
+  height:18px;
+  border:3px solid #E5E5E5;
+  border-top-color:#FF6300;
+  border-radius:50%;
+  display:inline-block;
+  animation:spin 0.8s linear infinite;
 }
 table{
   width:100%;
@@ -191,6 +205,8 @@ th{
 }
 tbody tr:nth-child(even){ background:#FAFAFA; }
 .table-actions{display:flex;gap:8px}
+
+@keyframes spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 900px){
   .admin-layout{

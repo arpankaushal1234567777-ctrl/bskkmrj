@@ -11,10 +11,16 @@ async function listEvents(_req, res, next) {
 
 async function createEvent(req, res, next) {
   try {
+    const title = String(req.body.title || "").trim();
+    const date = String(req.body.date || "").trim();
+    const location = String(req.body.location || "").trim();
+    if (!title || !date) {
+      return res.status(400).json({ error: "Title and date are required" });
+    }
     const ev = await Event.create({
-      title: req.body.title,
-      date: req.body.date,
-      location: req.body.location,
+      title,
+      date,
+      location,
     });
     res.status(201).json(ev);
   } catch (err) {
@@ -25,9 +31,15 @@ async function createEvent(req, res, next) {
 async function updateEvent(req, res, next) {
   try {
     const { id } = req.params;
+    const title = String(req.body.title || "").trim();
+    const date = String(req.body.date || "").trim();
+    const location = String(req.body.location || "").trim();
+    if (!title || !date) {
+      return res.status(400).json({ error: "Title and date are required" });
+    }
     const ev = await Event.findByIdAndUpdate(
       id,
-      { title: req.body.title, date: req.body.date, location: req.body.location },
+      { title, date, location },
       { new: true }
     );
     if (!ev) return res.status(404).json({ error: "Event not found" });

@@ -20,8 +20,11 @@ async function getStateTeam(_req, res, next) {
 
 async function createTeamMember(scope, req, res, next) {
   try {
+    const name = String(req.body.name || "").trim();
+    const role = String(req.body.role || "").trim();
+    if (!name || !role) return res.status(400).json({ error: "Name and role are required" });
     const Model = scope === "state" ? StateTeamMember : NationalTeamMember;
-    const doc = await Model.create({ name: req.body.name, role: req.body.role });
+    const doc = await Model.create({ name, role });
     res.status(201).json(doc);
   } catch (err) {
     next(err);
@@ -30,11 +33,14 @@ async function createTeamMember(scope, req, res, next) {
 
 async function updateTeamMember(scope, req, res, next) {
   try {
+    const name = String(req.body.name || "").trim();
+    const role = String(req.body.role || "").trim();
+    if (!name || !role) return res.status(400).json({ error: "Name and role are required" });
     const Model = scope === "state" ? StateTeamMember : NationalTeamMember;
     const { id } = req.params;
     const doc = await Model.findByIdAndUpdate(
       id,
-      { name: req.body.name, role: req.body.role },
+      { name, role },
       { new: true }
     );
     if (!doc) return res.status(404).json({ error: "Member not found" });
