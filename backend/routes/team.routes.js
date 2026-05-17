@@ -4,14 +4,21 @@ const {
   getNationalTeam,
   getStateTeam,
   createTeamMember,
+  createTeamMemberUnified,
   updateTeamMember,
+  updateTeamMemberUnified,
   deleteTeamMember,
+  deleteTeamMemberUnified,
 } = require("../controllers/team.controller");
 
 const router = express.Router();
 
 router.get("/national", getNationalTeam);
 router.get("/state", getStateTeam);
+
+router.post("/", requireAuth, createTeamMemberUnified);
+router.put("/:id", requireAuth, updateTeamMemberUnified);
+router.delete("/:id", requireAuth, deleteTeamMemberUnified);
 
 router.post("/national", requireAuth, (req, res, next) =>
   createTeamMember("national", req, res, next)

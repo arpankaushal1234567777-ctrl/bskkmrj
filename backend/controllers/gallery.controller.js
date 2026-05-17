@@ -1,4 +1,5 @@
 const { GalleryItem } = require("../models/gallery");
+const { pickImageUrl } = require("../utils/validate");
 
 async function listGallery(_req, res, next) {
   try {
@@ -13,15 +14,15 @@ async function createGalleryItem(req, res, next) {
   try {
     const title = String(req.body.title || "").trim();
     const date = String(req.body.date || "").trim();
-    const imageUrl = String(req.body.imageUrl || "").trim();
-    if (!title || !date || !imageUrl) {
-      return res.status(400).json({ error: "Title, date and imageUrl are required" });
+    const description = String(req.body.description || "").trim();
+    const imageUrl = pickImageUrl(req.body);
+    if (!title || !date) {
+      return res.status(400).json({ error: "Title and date are required" });
     }
-    const item = await GalleryItem.create({
-      title,
-      date,
-      imageUrl,
-    });
+    if (!imageUrl) {
+      return res.status(400).json({ error: "Image URL or upload is required" });
+    }
+    const item = await GalleryItem.create({ title, date, description, imageUrl });
     res.status(201).json(item);
   } catch (err) {
     next(err);
@@ -33,16 +34,23 @@ async function updateGalleryItem(req, res, next) {
     const { id } = req.params;
     const title = String(req.body.title || "").trim();
     const date = String(req.body.date || "").trim();
-    const imageUrl = String(req.body.imageUrl || "").trim();
-    if (!title || !date || !imageUrl) {
-      return res.status(400).json({ error: "Title, date and imageUrl are required" });
+    const description = String(req.body.description || "").trim();
+    const imageUrl = pickImageUrl(req.body);
+    if (!title || !date) {
+      return res.status(400).json({ error: "Title and date are required" });
     }
+    const existing = await GalleryItem.findById(id);
+    if (!existing) return res.status(404).json({ error: "Gallery item not found" });
     const item = await GalleryItem.findByIdAndUpdate(
       id,
-      { title, date, imageUrl },
+      {
+        title,
+        date,
+        description,
+        imageUrl: imageUrl || existing.imageUrl,
+      },
       { new: true }
     );
-    if (!item) return res.status(404).json({ error: "Gallery item not found" });
     res.json(item);
   } catch (err) {
     next(err);

@@ -8,12 +8,29 @@
     return `${API_BASE}${trimmed.startsWith("/") ? trimmed : `/${trimmed}`}`;
   }
 
-  async function apiGetJson(path) {
-    const url = buildUrl(path);
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-    return res.json();
+  async function parseResponse(res) {
+    const isJson = res.headers.get("content-type")?.includes("application/json");
+    const body = isJson ? await res.json() : await res.text();
+    if (!res.ok) {
+      const message = body && body.error ? body.error : `Request failed: ${res.status}`;
+      throw new Error(message);
+    }
+    return body;
   }
 
-  window.BSKKMRJ_API = { apiGetJson };
+  async function apiGetJson(path) {
+    const res = await fetch(buildUrl(path));
+    return parseResponse(res);
+  }
+
+  async function apiPostJson(path, payload) {
+    const res = await fetch(buildUrl(path), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    return parseResponse(res);
+  }
+
+  window.BSKKMRJ_API = { apiGetJson, apiPostJson, buildUrl };
 })();

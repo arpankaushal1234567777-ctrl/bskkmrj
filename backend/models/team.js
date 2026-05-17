@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const baseFields = {
   name: { type: String, required: true, trim: true },
   role: { type: String, required: true, trim: true },
+  photo: { type: String, trim: true, default: "" },
+  phone: { type: String, trim: true, default: "" },
 };
 
 const nationalSchema = new mongoose.Schema(baseFields, { timestamps: true });

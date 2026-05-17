@@ -18,7 +18,7 @@
   <main>
     <section class="page-hero">
       <div class="container">
-        <p class="breadcrumb" data-i18n="crumbJoin">Join Us / Home / Contact</p>
+        <p class="breadcrumb" data-i18n="crumbJoin">Join Us / Home / Join</p>
         <h1 data-i18n="pageJoinTitle">Join Us</h1>
       </div>
     </section>
@@ -26,55 +26,34 @@
     <section class="section">
       <div class="container">
         <h2 class="section-title" data-i18n="pageJoinHeading">Member Registration</h2>
-        <div class="card prose">
-          <h3>संगठन सदस्य्ता अभियान 2024</h3>
-          <p>
-            प्रतिष्ठा में,समस्त सम्मानित कार्यकर्ता एवं पदाधिकारी गणों को सादर नमस्कार शुभकामनायें जय
-            माननीय राष्ट्रीय कार्यकारी अध्यक्ष-श्रीमान राजीव सेट्टी जी के नेतृत्व में संगठन में सक्रिय सदस्य बने रहने
-            के लिए प्रत्येक पदाधिकारी को संगठन में 50 प्राइमरी सदस्य बनाने अनिवार्य हैं! संगठन का प्राइमरी सदस्य्ता शुल्क
-            Rs.5/ मात्र है,और सक्रिय सदस्य्ता शुल्क से 370 है संगठन में पदाधिकारी बने रहने के लिए अपनी सक्रिय सदस्यता शुल्क
-            के साथ सभी सम्मानित पदाधिकारी को 50 प्राइमरी सदस्य बनना अनिवार्य है
-          </p>
-          <p>
-            Note :-1 : दिये गए संगठन के वार कोड से भी डायरेक्ट अकाउंट में ट्रांसफर कर सकते हैँ।।
-            Note:-2: संगठन के इस अकाउंट में भी ट्रांसफर कर सकते हैँ।।
-            BHARATIYA SHRAMIK KAMGAR KARMACHARI MAHASANGH RAJASTHAN  BHAJPA PRANITA
-            Ac No.-31860200002309
-            IFSC No – BARB0AVALUC
-            BANK OF BARODA
-          </p>
-        </div>
-
         <div class="card">
-          <p class="muted small">Please enable JavaScript in your browser to complete this form.</p>
           <form class="form" id="joinForm">
             <label>
               <span>Name</span>
-              <input type="text" name="name" placeholder="Name" required />
+              <input type="text" name="name" required />
             </label>
             <label>
               <span>Email</span>
-              <input type="email" name="email" placeholder="Email" required />
+              <input type="email" name="email" required />
             </label>
             <label>
               <span>Phone</span>
-              <input type="tel" name="phone" placeholder="Phone" required />
+              <input type="tel" name="phone" required />
             </label>
             <label>
-              <span>Transaction Id</span>
-              <input type="text" name="transactionId" placeholder="Transaction Id" required />
+              <span>Address</span>
+              <input type="text" name="address" />
             </label>
             <label>
-              <span>Aadhar Card Upload</span>
-              <input type="file" name="aadharCard" accept="image/*" required />
+              <span>Occupation</span>
+              <input type="text" name="occupation" />
             </label>
             <label>
-              <span>Photo Upload</span>
-              <input type="file" name="photoUpload" accept="image/*" required />
+              <span>Message</span>
+              <textarea name="message" rows="4"></textarea>
             </label>
-
-            <button class="btn btn-primary" type="submit">Submit Join Request</button>
-            <p id="formFeedback" style="display:none; margin-top:10px; font-weight:600;"></p>
+            <button class="btn btn-primary" type="submit" id="joinSubmitBtn">Submit Join Request</button>
+            <p id="formFeedback" class="form-feedback" hidden></p>
           </form>
         </div>
       </div>
@@ -83,33 +62,36 @@
 
   <div id="footer-root"></div>
 
+  <script src="../JS/api.js"></script>
   <script src="../JS/ui.js"></script>
   <script src="../JS/main.js"></script>
   <script>
-    document.getElementById('joinForm')?.addEventListener('submit', async (e) => {
+    document.getElementById("joinForm")?.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const fb = document.getElementById('formFeedback');
-      fb.style.display = 'block';
-      fb.style.color = '#FF6300';
-      fb.textContent = 'Submitting...';
+      const fb = document.getElementById("formFeedback");
+      const btn = document.getElementById("joinSubmitBtn");
+      fb.hidden = false;
+      fb.className = "form-feedback form-feedback--loading";
+      fb.textContent = "Submitting...";
+      if (btn) btn.disabled = true;
+      const fd = new FormData(e.target);
       try {
-        const formData = new FormData(e.target);
-        const res = await fetch('/api/join', {
-          method: 'POST',
-          body: formData
+        await window.BSKKMRJ_API.apiPostJson("/api/join", {
+          name: fd.get("name"),
+          email: fd.get("email"),
+          phone: fd.get("phone"),
+          address: fd.get("address"),
+          occupation: fd.get("occupation"),
+          message: fd.get("message"),
         });
-        const data = await res.json();
-        if(res.ok){
-          fb.style.color = 'green';
-          fb.textContent = 'Message submitted successfully! The admin has been notified.';
-          e.target.reset();
-        } else {
-          fb.style.color = 'red';
-          fb.textContent = 'Error: ' + data.error;
-        }
+        fb.className = "form-feedback form-feedback--success";
+        fb.textContent = "Your join request was submitted successfully. We will contact you soon.";
+        e.target.reset();
       } catch (err) {
-        fb.style.color = 'red';
-        fb.textContent = 'Submission failed. Make sure the backend server relative to this page is running.';
+        fb.className = "form-feedback form-feedback--error";
+        fb.textContent = err.message || "Submission failed. Please try again.";
+      } finally {
+        if (btn) btn.disabled = false;
       }
     });
   </script>

@@ -76,6 +76,23 @@
     btn.addEventListener("click", logout);
   }
 
+  function showToast(message, type = "success") {
+    let host = document.getElementById("adminToast");
+    if (!host) {
+      host = document.createElement("div");
+      host.id = "adminToast";
+      host.className = "admin-toast";
+      document.body.appendChild(host);
+    }
+    host.className = `admin-toast admin-toast--${type}`;
+    host.textContent = message;
+    host.hidden = false;
+    clearTimeout(showToast._timer);
+    showToast._timer = setTimeout(() => {
+      host.hidden = true;
+    }, 3500);
+  }
+
   window.BSKKMRJ_ADMIN = {
     api,
     getToken,
@@ -83,5 +100,6 @@
     requireAuthOrRedirect,
     logout,
     wireLogout,
+    showToast,
   };
 })();

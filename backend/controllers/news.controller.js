@@ -1,4 +1,5 @@
 const { News } = require("../models/news");
+const { pickImageUrl } = require("../utils/validate");
 
 async function listNews(_req, res, next) {
   try {
@@ -9,18 +10,21 @@ async function listNews(_req, res, next) {
   }
 }
 
+function buildNewsPayload(body, existing) {
+  const title = String(body.title || "").trim();
+  const date = String(body.date || "").trim();
+  const url = String(body.url || "").trim();
+  const excerpt = String(body.excerpt || body.content || "").trim();
+  const content = String(body.content || body.excerpt || "").trim();
+  const imageUrl = pickImageUrl(body) || (existing && existing.imageUrl) || "";
+  return { title, date, url, excerpt, content, imageUrl };
+}
+
 async function createNews(req, res, next) {
   try {
-    const title = String(req.body.title || "").trim();
-    const url = String(req.body.url || "").trim();
-    const excerpt = String(req.body.excerpt || "").trim();
-    if (!title) return res.status(400).json({ error: "Title is required" });
-
-    const news = await News.create({
-      title,
-      url,
-      excerpt,
-    });
+    const payload = buildNewsPayload(req.body);
+    if (!payload.title) return res.status(400).json({ error: "Title is required" });
+    const news = await News.create(payload);
     res.status(201).json(news);
   } catch (err) {
     next(err);
@@ -30,16 +34,11 @@ async function createNews(req, res, next) {
 async function updateNews(req, res, next) {
   try {
     const { id } = req.params;
-    const title = String(req.body.title || "").trim();
-    const url = String(req.body.url || "").trim();
-    const excerpt = String(req.body.excerpt || "").trim();
-    if (!title) return res.status(400).json({ error: "Title is required" });
-    const news = await News.findByIdAndUpdate(
-      id,
-      { title, url, excerpt },
-      { new: true }
-    );
-    if (!news) return res.status(404).json({ error: "News not found" });
+    const existing = await News.findById(id);
+    if (!existing) return res.status(404).json({ error: "News not found" });
+    const payload = buildNewsPayload(req.body, existing);
+    if (!payload.title) return res.status(400).json({ error: "Title is required" });
+    const news = await News.findByIdAndUpdate(id, payload, { new: true });
     res.json(news);
   } catch (err) {
     next(err);

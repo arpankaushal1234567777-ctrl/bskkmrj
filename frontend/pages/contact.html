@@ -26,32 +26,40 @@
     <section class="section">
       <div class="container">
         <h2 class="section-title" data-i18n="pageContactHeading">Get In Touch With Us</h2>
-        <h3 data-i18n="pageContactSub">Know More Contact</h3>
 
         <div class="grid-2">
-          <div class="card">
+          <div class="card" id="contactInfoCard">
             <h3>भारतीय श्रमिक कामगार कर्मचारी महासंघ राजस्थान</h3>
-            <p class="muted">Call us For Any Questions !</p>
-            <p><a class="link" href="tel:+919451238931">+919451238931</a></p>
+            <p class="muted">Call us for any questions!</p>
+            <p><a class="link" id="contactPhone" href="tel:+919451238931">+919451238931</a></p>
+            <p class="muted" id="contactAddress"></p>
           </div>
 
           <div class="card">
             <h3>Send a message</h3>
-            <form class="form" onsubmit="return false;">
+            <form class="form" id="contactForm">
               <label>
                 <span>Name</span>
-                <input type="text" placeholder="Name" />
+                <input type="text" name="name" required />
               </label>
               <label>
                 <span>Email</span>
-                <input type="email" placeholder="Email" />
+                <input type="email" name="email" required />
+              </label>
+              <label>
+                <span>Phone</span>
+                <input type="tel" name="phone" />
+              </label>
+              <label>
+                <span>Subject</span>
+                <input type="text" name="subject" />
               </label>
               <label>
                 <span>Message</span>
-                <textarea rows="5" placeholder="Write your message"></textarea>
+                <textarea name="message" rows="5" required></textarea>
               </label>
-              <button class="btn btn-primary" type="submit">Submit</button>
-              <p class="muted small">Form submission can be wired to backend later.</p>
+              <button class="btn btn-primary" type="submit" id="contactSubmitBtn">Submit</button>
+              <p id="contactFeedback" class="form-feedback" hidden></p>
             </form>
           </div>
         </div>
@@ -61,7 +69,50 @@
 
   <div id="footer-root"></div>
 
+  <script src="../JS/api.js"></script>
   <script src="../JS/ui.js"></script>
   <script src="../JS/main.js"></script>
+  <script>
+    (async () => {
+      try {
+        const info = await window.BSKKMRJ_API.apiGetJson("/api/contact/info");
+        const phone = document.getElementById("contactPhone");
+        const addr = document.getElementById("contactAddress");
+        if (phone && info.phone) {
+          phone.textContent = info.phone;
+          phone.href = `tel:${info.phone.replace(/\s/g, "")}`;
+        }
+        if (addr && info.address) addr.textContent = info.address;
+      } catch (_e) {}
+    })();
+
+    document.getElementById("contactForm")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fb = document.getElementById("contactFeedback");
+      const btn = document.getElementById("contactSubmitBtn");
+      fb.hidden = false;
+      fb.className = "form-feedback form-feedback--loading";
+      fb.textContent = "Sending...";
+      if (btn) btn.disabled = true;
+      const fd = new FormData(e.target);
+      try {
+        await window.BSKKMRJ_API.apiPostJson("/api/contact", {
+          name: fd.get("name"),
+          email: fd.get("email"),
+          phone: fd.get("phone"),
+          subject: fd.get("subject"),
+          message: fd.get("message"),
+        });
+        fb.className = "form-feedback form-feedback--success";
+        fb.textContent = "Message sent successfully. We will get back to you soon.";
+        e.target.reset();
+      } catch (err) {
+        fb.className = "form-feedback form-feedback--error";
+        fb.textContent = err.message || "Could not send message. Please try again.";
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>

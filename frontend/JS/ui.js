@@ -56,7 +56,6 @@
             <li><a data-nav="news" href="#" data-i18n="navNews">News</a></li>
             <li><a data-nav="join" href="#" data-i18n="navJoin">Join Us</a></li>
             <li><a data-nav="contact" href="#" data-i18n="navContact">Contact</a></li>
-            <li class="nav-cta"><a data-nav="donate" class="btn btn-primary btn-sm" href="#" data-i18n="navDonate">Donate</a></li>
           </ul>
         </nav>
       </div>
@@ -85,7 +84,6 @@
             <li><a data-nav="about" href="#" data-i18n="navAbout">About Us</a></li>
             <li><a data-nav="join" href="#" data-i18n="navJoin">Join BSKKMRJ</a></li>
             <li><a data-nav="gallery" href="#" data-i18n="navGallery">Gallery</a></li>
-            <li><a data-nav="donate" href="#" data-i18n="navDonate">Make Donation</a></li>
           </ul>
         </div>
         <div>
@@ -130,7 +128,6 @@
         news: "./news.html",
         contact: "./contact.html",
         join: "./join.html",
-        donate: "./donate.html",
         nationalTeam: "./national-team.html",
         stateTeam: "./state-team.html",
       };
@@ -144,7 +141,6 @@
       news: "./pages/news.html",
       contact: "./pages/contact.html",
       join: "./pages/join.html",
-      donate: "./pages/donate.html",
       nationalTeam: "./pages/national-team.html",
       stateTeam: "./pages/state-team.html",
     };

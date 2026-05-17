@@ -1,4 +1,5 @@
 const { Event } = require("../models/event");
+const { pickImageUrl } = require("../utils/validate");
 
 async function listEvents(_req, res, next) {
   try {
@@ -9,19 +10,22 @@ async function listEvents(_req, res, next) {
   }
 }
 
+function buildEventPayload(body, existing) {
+  const title = String(body.title || "").trim();
+  const date = String(body.date || "").trim();
+  const location = String(body.location || "").trim();
+  const description = String(body.description || "").trim();
+  const imageUrl = pickImageUrl(body) || (existing && existing.imageUrl) || "";
+  return { title, date, location, description, imageUrl };
+}
+
 async function createEvent(req, res, next) {
   try {
-    const title = String(req.body.title || "").trim();
-    const date = String(req.body.date || "").trim();
-    const location = String(req.body.location || "").trim();
-    if (!title || !date) {
+    const payload = buildEventPayload(req.body);
+    if (!payload.title || !payload.date) {
       return res.status(400).json({ error: "Title and date are required" });
     }
-    const ev = await Event.create({
-      title,
-      date,
-      location,
-    });
+    const ev = await Event.create(payload);
     res.status(201).json(ev);
   } catch (err) {
     next(err);
@@ -31,18 +35,13 @@ async function createEvent(req, res, next) {
 async function updateEvent(req, res, next) {
   try {
     const { id } = req.params;
-    const title = String(req.body.title || "").trim();
-    const date = String(req.body.date || "").trim();
-    const location = String(req.body.location || "").trim();
-    if (!title || !date) {
+    const existing = await Event.findById(id);
+    if (!existing) return res.status(404).json({ error: "Event not found" });
+    const payload = buildEventPayload(req.body, existing);
+    if (!payload.title || !payload.date) {
       return res.status(400).json({ error: "Title and date are required" });
     }
-    const ev = await Event.findByIdAndUpdate(
-      id,
-      { title, date, location },
-      { new: true }
-    );
-    if (!ev) return res.status(404).json({ error: "Event not found" });
+    const ev = await Event.findByIdAndUpdate(id, payload, { new: true });
     res.json(ev);
   } catch (err) {
     next(err);

@@ -220,3 +220,12 @@ ul{margin:0;padding:0;list-style:none}
   box-shadow:var(--shadow);
 }
 .lang-toggle:hover{background:#f1f1f1;}
+
+.form-feedback{
+  margin-top:12px;
+  font-weight:600;
+  font-size:14px;
+}
+.form-feedback--loading{color:var(--brand,#FF6300);}
+.form-feedback--success{color:#198754;}
+.form-feedback--error{color:#dc3545;}

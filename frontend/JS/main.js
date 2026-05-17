@@ -11,7 +11,6 @@
       { key: "news", match: ["news.html"] },
       { key: "contact", match: ["contact.html"] },
       { key: "join", match: ["join.html", "login.html"] },
-      { key: "donate", match: ["donate.html"] },
       { key: "nationalTeam", match: ["national-team.html"] },
       { key: "stateTeam", match: ["state-team.html"] },
     ];
