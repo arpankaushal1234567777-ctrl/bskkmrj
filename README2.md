@@ -18,7 +18,7 @@
 ## 🚀 How to Run
 1) Install deps: `npm install`
 2) Create `.env` from `.env.example` and fill values (Mongo URI, JWT secret, admin creds).
-3) Start backend: `npm start` (listens on `PORT`, default 5000).
+3) Start backend: `npm start` (listens on `PORT`, default 5001).
 4) Open `frontend/public/index.html` (public site) and `admin-panel/index.html` (admin) in a static server or directly in the browser; admin actions use the API at port 5000.
 
 ## 🔐 Auth Flow
