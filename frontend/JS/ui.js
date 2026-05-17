@@ -3,7 +3,7 @@
     if (window.BSK_LANG) return Promise.resolve();
     return new Promise((resolve, reject) => {
       const script = document.createElement("script");
-      script.src = "../JS/lang.js";
+      script.src = `${getRootPrefix()}JS/lang.js`;
       script.onload = () => resolve();
       script.onerror = reject;
       document.head.appendChild(script);
@@ -110,37 +110,43 @@
     return String(pathname || "").replace(/\\/g, "/");
   }
 
-  function getLinkMap() {
+  function isInPages() {
     const pathname = normalizePathname(window.location.pathname);
-    const isInPublic = pathname.includes("/frontend/public/") || pathname.endsWith("/public/index.html") || pathname.includes("/public/");
-    const isInPages = pathname.includes("/frontend/pages/") || pathname.includes("/pages/");
+    return pathname.includes("/pages/");
+  }
 
-    if (isInPublic && !isInPages) {
+  /** Relative prefix from current page to frontend root (./ or ../). */
+  function getRootPrefix() {
+    return isInPages() ? "../" : "./";
+  }
+
+  function getLinkMap() {
+    if (isInPages()) {
       return {
-        home: "./index.html",
-        about: "../pages/about.html",
-        events: "../pages/events.html",
-        gallery: "../pages/gallery.html",
-        news: "../pages/news.html",
-        contact: "../pages/contact.html",
-        join: "../pages/join.html",
-        donate: "../pages/donate.html",
-        nationalTeam: "../pages/national-team.html",
-        stateTeam: "../pages/state-team.html",
+        home: "../index.html",
+        about: "./about.html",
+        events: "./events.html",
+        gallery: "./gallery.html",
+        news: "./news.html",
+        contact: "./contact.html",
+        join: "./join.html",
+        donate: "./donate.html",
+        nationalTeam: "./national-team.html",
+        stateTeam: "./state-team.html",
       };
     }
 
     return {
-      home: "../public/index.html",
-      about: "./about.html",
-      events: "./events.html",
-      gallery: "./gallery.html",
-      news: "./news.html",
-      contact: "./contact.html",
-      join: "./join.html",
-      donate: "./donate.html",
-      nationalTeam: "./national-team.html",
-      stateTeam: "./state-team.html",
+      home: "./index.html",
+      about: "./pages/about.html",
+      events: "./pages/events.html",
+      gallery: "./pages/gallery.html",
+      news: "./pages/news.html",
+      contact: "./pages/contact.html",
+      join: "./pages/join.html",
+      donate: "./pages/donate.html",
+      nationalTeam: "./pages/national-team.html",
+      stateTeam: "./pages/state-team.html",
     };
   }
 
@@ -160,6 +166,19 @@
     if (window.BSK_LANG?.applyCurrent) {
       window.BSK_LANG.applyCurrent();
     }
+  }
+
+  /** Navbar/footer fragments use ../assets; fix after inject when served from site root. */
+  function fixComponentAssetPaths(root) {
+    if (!root) return;
+    const assetPrefix = `${getRootPrefix()}assets/`;
+    root.querySelectorAll("[src]").forEach((el) => {
+      const src = el.getAttribute("src");
+      if (src && (src.startsWith("../assets/") || src.startsWith("./assets/"))) {
+        const path = src.replace(/^(\.\.\/|\.\/)?assets\//, "");
+        el.setAttribute("src", assetPrefix + path);
+      }
+    });
   }
 
   function wireNavLinks(root = document) {
@@ -215,17 +234,17 @@
 
   async function init() {
     await ensureLangScript();
-    const pathname = normalizePathname(window.location.pathname);
-    const isInPublic = pathname.includes("/frontend/public/") || pathname.includes("/public/");
-
-    const navbarUrl = isInPublic ? "../component/navbar.html" : "../component/navbar.html";
-    const footerUrl = isInPublic ? "../component/footer.html" : "../component/footer.html";
+    const componentPrefix = `${getRootPrefix()}component/`;
+    const navbarUrl = `${componentPrefix}navbar.html`;
+    const footerUrl = `${componentPrefix}footer.html`;
 
     await Promise.all([
       injectHtml("#navbar-root", navbarUrl, NAVBAR_FALLBACK_HTML),
       injectHtml("#footer-root", footerUrl, FOOTER_FALLBACK_HTML),
     ]);
 
+    fixComponentAssetPaths(document.getElementById("navbar-root"));
+    fixComponentAssetPaths(document.getElementById("footer-root"));
     wireNavLinks(document);
     wireNavbarInteractions();
     ensureLangToggle();
