@@ -1,5 +1,5 @@
 (() => {
-  const API_BASE = "http://localhost:5001/api";
+  const API_BASE = "https://bskkmrj-api.onrender.com/api";
 
   function buildUrl(path) {
     const raw = String(path || "");
