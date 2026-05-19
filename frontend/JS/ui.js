@@ -190,20 +190,61 @@
     const navLinks = document.getElementById("navLinks");
 
     if (menuToggle && navLinks) {
+      // Create a real overlay div instead of body::before pseudo-element.
+      // The pseudo-element approach causes z-index stacking issues on mobile
+      // browsers where it paints over the drawer and eats all touch events.
+      let overlay = document.getElementById("menuOverlay");
+      if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.id = "menuOverlay";
+        overlay.style.cssText = [
+          "display:none",
+          "position:fixed",
+          "inset:0",
+          "background:rgba(0,0,0,0.5)",
+          "z-index:199",   // below drawer (200) but above page content
+          "transition:opacity 0.3s",
+          "opacity:0",
+        ].join(";");
+        document.body.appendChild(overlay);
+      }
+
+      const openMenu = () => {
+        navLinks.classList.add("open");
+        menuToggle.setAttribute("aria-expanded", "true");
+        document.body.classList.add("menu-open");
+        overlay.style.display = "block";
+        // Trigger transition on next frame
+        requestAnimationFrame(() => { overlay.style.opacity = "1"; });
+      };
+
       const closeMenu = () => {
         navLinks.classList.remove("open");
         menuToggle.setAttribute("aria-expanded", "false");
         document.body.classList.remove("menu-open");
+        overlay.style.opacity = "0";
+        setTimeout(() => { overlay.style.display = "none"; }, 300);
       };
 
       menuToggle.addEventListener("click", () => {
-        const open = navLinks.classList.toggle("open");
-        menuToggle.setAttribute("aria-expanded", String(open));
-        document.body.classList.toggle("menu-open", open);
+        if (navLinks.classList.contains("open")) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
       });
 
+      // Tap the overlay to close
+      overlay.addEventListener("click", closeMenu);
+
+      // Close on any nav link tap (navigates away or same-page)
       navLinks.querySelectorAll("a").forEach((link) => {
-        link.addEventListener("click", () => closeMenu());
+        link.addEventListener("click", () => {
+          // For dropdown toggles, don't close — let dropdown logic handle it
+          if (!link.classList.contains("dropdown-toggle")) {
+            closeMenu();
+          }
+        });
       });
     }
 
@@ -212,13 +253,13 @@
         e.preventDefault();
         const li = btn.closest(".dropdown");
         if (!li) return;
-        
+
         // Close other dropdowns
         document.querySelectorAll(".dropdown").forEach((otherLi) => {
           if (otherLi !== li) {
             otherLi.classList.remove("open");
             const otherBtn = otherLi.querySelector(".dropdown-toggle");
-            if(otherBtn) otherBtn.setAttribute("aria-expanded", "false");
+            if (otherBtn) otherBtn.setAttribute("aria-expanded", "false");
           }
         });
 

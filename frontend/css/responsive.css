@@ -35,7 +35,7 @@
     gap: 4px;
     box-shadow: var(--shadow-hover);
     transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 100;
+    z-index: 200; /* above the JS overlay div at z-index:199 */
     overflow-y: auto;
   }
   .nav-links.open { left: 0; }
@@ -50,14 +50,8 @@
   }
   .nav-links a:last-child { border-bottom: none; }
 
-  body.menu-open::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 90;
-    animation: fadeIn 0.3s forwards;
-  }
+  /* Overlay is now a real <div id="menuOverlay"> injected by ui.js —
+     no body::before needed. The div sits at z-index:199. */
 
   .dropdown-menu {
     position: static;
@@ -130,7 +124,7 @@
     gap: 4px;
     box-shadow: var(--shadow-hover);
     transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 100;
+    z-index: 200;
     overflow-y: auto;
   }
   .nav-links.open { left: 0; }
@@ -142,14 +136,7 @@
     border-bottom: 1px solid var(--border);
   }
   .nav-links a:last-child { border-bottom: none; }
-  body.menu-open::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 90;
-    animation: fadeIn 0.3s forwards;
-  }
+  /* Overlay handled by #menuOverlay div in ui.js */
   .dropdown-menu {
     position: static;
     display: none;
