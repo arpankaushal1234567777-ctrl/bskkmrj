@@ -188,47 +188,22 @@
   function wireNavbarInteractions() {
     const menuToggle = document.getElementById("menuToggle");
     const navLinks = document.getElementById("navLinks");
+    const navbar = document.querySelector(".navbar");
 
     if (menuToggle && navLinks) {
-      // Create a real overlay div instead of body::before pseudo-element.
-      // The pseudo-element approach causes z-index stacking issues on mobile
-      // browsers where it paints over the drawer and eats all touch events.
-      let overlay = document.getElementById("menuOverlay");
-      if (!overlay) {
-        overlay = document.createElement("div");
-        overlay.id = "menuOverlay";
-        overlay.style.cssText = [
-          "display:none",
-          "position:fixed",
-          "inset:0",
-          "background:rgba(0,0,0,0.5)",
-          "z-index:199",   // below drawer (200) but above page content
-          "transition:opacity 0.3s",
-          "opacity:0",
-          "pointer-events:none",
-        ].join(";");
-        document.body.appendChild(overlay);
-      }
+      const isMobileViewport = () => window.matchMedia("(max-width: 1100px)").matches;
 
       const openMenu = () => {
+        if (!isMobileViewport()) return;
         navLinks.classList.add("open");
         menuToggle.setAttribute("aria-expanded", "true");
         document.body.classList.add("menu-open");
-        overlay.style.display = "block";
-        overlay.style.pointerEvents = "auto";
-        // Trigger transition on next frame
-        requestAnimationFrame(() => { overlay.style.opacity = "1"; });
       };
 
       const closeMenu = () => {
         navLinks.classList.remove("open");
         menuToggle.setAttribute("aria-expanded", "false");
         document.body.classList.remove("menu-open");
-        overlay.style.opacity = "0";
-        setTimeout(() => {
-          overlay.style.display = "none";
-          overlay.style.pointerEvents = "none";
-        }, 300);
       };
 
       menuToggle.addEventListener("click", () => {
@@ -239,25 +214,43 @@
         }
       });
 
-      // Tap the overlay to close
-      overlay.addEventListener("click", closeMenu);
-
-      // Close on any nav link tap (navigates away or same-page).
-      // On some mobile browsers, the drawer/overlay transition can interfere with
-      // default anchor navigation; ensure we trigger navigation explicitly.
       navLinks.querySelectorAll("a").forEach((link) => {
-        const handler = (e) => {
-          const isDropdownToggle = link.classList.contains("dropdown-toggle");
-          if (isDropdownToggle) return;
-          const href = String(link.getAttribute("href") || "");
-          if (!href || href === "#") return;
-          e.preventDefault();
+        link.addEventListener("click", () => {
+          if (link.classList.contains("dropdown-toggle")) return;
+          document.querySelectorAll(".dropdown").forEach((dropdown) => {
+            dropdown.classList.remove("open");
+            const toggle = dropdown.querySelector(".dropdown-toggle");
+            if (toggle) toggle.setAttribute("aria-expanded", "false");
+          });
           closeMenu();
-          window.location.assign(href);
-        };
-        link.addEventListener("click", handler, { passive: false });
-        link.addEventListener("touchend", handler, { passive: false });
+        });
       });
+
+      document.addEventListener("click", (e) => {
+        if (!navLinks.classList.contains("open")) return;
+        const target = e.target;
+        if (target instanceof Node && !navLinks.contains(target) && !menuToggle.contains(target)) {
+          closeMenu();
+        }
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeMenu();
+      });
+
+      window.addEventListener("resize", () => {
+        if (!isMobileViewport()) {
+          closeMenu();
+        }
+      });
+
+      if (navbar) {
+        navbar.addEventListener("focusout", (e) => {
+          const nextTarget = e.relatedTarget;
+          if (nextTarget instanceof Node && navbar.contains(nextTarget)) return;
+          closeMenu();
+        });
+      }
     }
 
     document.querySelectorAll(".dropdown-toggle").forEach((btn) => {
