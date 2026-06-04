@@ -1,5 +1,6 @@
 const express = require("express");
-const { requireAuth } = require("../middleware/auth.middleware");
+const { requireAuth, optionalAuth } = require("../middleware/auth.middleware");
+const { activityLogger } = require("../middleware/activity.middleware");
 const {
   listNews,
   createNews,
@@ -9,9 +10,9 @@ const {
 
 const router = express.Router();
 
-router.get("/", listNews);
-router.post("/", requireAuth, createNews);
-router.put("/:id", requireAuth, updateNews);
-router.delete("/:id", requireAuth, deleteNews);
+router.get("/", optionalAuth, listNews);
+router.post("/", requireAuth, activityLogger("news:create"), createNews);
+router.put("/:id", requireAuth, activityLogger("news:update"), updateNews);
+router.delete("/:id", requireAuth, activityLogger("news:delete"), deleteNews);
 
 module.exports = router;

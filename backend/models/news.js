@@ -8,6 +8,7 @@ const newsSchema = new mongoose.Schema(
     excerpt: { type: String, trim: true },
     content: { type: String, trim: true, default: "" },
     imageUrl: { type: String, trim: true, default: "" },
+    published: { type: Boolean, default: true, index: true },
   },
   { timestamps: true }
 );

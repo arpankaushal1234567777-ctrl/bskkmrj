@@ -10,9 +10,17 @@ body{
 h1, h2, h3, h4, h5, h6, .logo-mark, .nav-links a, .btn {
   font-family: 'Poppins', sans-serif;
 }
-img{max-width:100%;display:block}
+img,video,canvas,svg{max-width:100%;display:block}
+iframe{max-width:100%}
+video{height:auto}
 a{color:inherit;text-decoration:none}
 ul{margin:0;padding:0;list-style:none}
+button,input,textarea,select{font:inherit}
+button{touch-action:manipulation}
+*:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+/* Prevent long strings/URLs from breaking layout */
+p,li,h1,h2,h3,h4,h5,h6{overflow-wrap:anywhere;word-break:break-word}
 
 .container{max-width:var(--container);margin:0 auto;padding:0 18px}
 .section{padding:56px 0}

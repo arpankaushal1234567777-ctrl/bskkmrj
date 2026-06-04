@@ -205,6 +205,7 @@
           "z-index:199",   // below drawer (200) but above page content
           "transition:opacity 0.3s",
           "opacity:0",
+          "pointer-events:none",
         ].join(";");
         document.body.appendChild(overlay);
       }
@@ -214,6 +215,7 @@
         menuToggle.setAttribute("aria-expanded", "true");
         document.body.classList.add("menu-open");
         overlay.style.display = "block";
+        overlay.style.pointerEvents = "auto";
         // Trigger transition on next frame
         requestAnimationFrame(() => { overlay.style.opacity = "1"; });
       };
@@ -223,7 +225,10 @@
         menuToggle.setAttribute("aria-expanded", "false");
         document.body.classList.remove("menu-open");
         overlay.style.opacity = "0";
-        setTimeout(() => { overlay.style.display = "none"; }, 300);
+        setTimeout(() => {
+          overlay.style.display = "none";
+          overlay.style.pointerEvents = "none";
+        }, 300);
       };
 
       menuToggle.addEventListener("click", () => {
@@ -237,14 +242,21 @@
       // Tap the overlay to close
       overlay.addEventListener("click", closeMenu);
 
-      // Close on any nav link tap (navigates away or same-page)
+      // Close on any nav link tap (navigates away or same-page).
+      // On some mobile browsers, the drawer/overlay transition can interfere with
+      // default anchor navigation; ensure we trigger navigation explicitly.
       navLinks.querySelectorAll("a").forEach((link) => {
-        link.addEventListener("click", () => {
-          // For dropdown toggles, don't close — let dropdown logic handle it
-          if (!link.classList.contains("dropdown-toggle")) {
-            closeMenu();
-          }
-        });
+        const handler = (e) => {
+          const isDropdownToggle = link.classList.contains("dropdown-toggle");
+          if (isDropdownToggle) return;
+          const href = String(link.getAttribute("href") || "");
+          if (!href || href === "#") return;
+          e.preventDefault();
+          closeMenu();
+          window.location.assign(href);
+        };
+        link.addEventListener("click", handler, { passive: false });
+        link.addEventListener("touchend", handler, { passive: false });
       });
     }
 

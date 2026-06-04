@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BSKKMRJ Admin – Donations</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/admin.css" />
+</head>
+<body class="admin-bg">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="../assets/images/LOGO.jpeg" alt="Logo">
+          BSKKMRJ Admin
+        </div>
+        <button id="sidebarToggle" class="sidebar-toggle" type="button">☰</button>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="./dashboard.html" class="nav-link">Dashboard</a>
+                <a href="./manage-news.html" class="nav-link">Manage News</a>
+                <a href="./add-event.html" class="nav-link">Manage Events</a>
+                <a href="./manage-gallery.html" class="nav-link">Manage Gallery</a>
+                <a href="./manage-team.html" class="nav-link">Manage Team</a>
+                <a href="./manage-about.html" class="nav-link">Manage About</a>
+                <a href="./join-requests.html" class="nav-link">Join Requests</a>
+                <a href="./contact-messages.html" class="nav-link">Messages</a>
+        <button id="logoutBtn" class="nav-link nav-link-danger" type="button">Sign out</button>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-main-header">
+        <h1>Donations Overview</h1>
+        <p>Review and track all incoming donations and funds.</p>
+      </header>
+
+      <section class="admin-section">
+        <div class="stats-grid">
+          <article class="stat-card">
+            <h2>Total Donations</h2>
+            <p class="stat-number">₹ 45,210</p>
+          </article>
+          <article class="stat-card">
+            <h2>Donations This Month</h2>
+            <p class="stat-number">₹ 12,400</p>
+          </article>
+          <article class="stat-card">
+            <h2>Recent Donors</h2>
+            <p class="stat-number">34</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="admin-section">
+        <header class="admin-section-header">
+          <h2>Recent Transactions</h2>
+        </header>
+        <input type="text" placeholder="Search by donor name or transaction ID..." class="admin-search">
+        <div class="table-shell">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Donor Name</th>
+                <th>Amount</th>
+                <th>Payment Method</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2024-05-18</td>
+                <td>Ramesh Kumar</td>
+                <td><b>₹ 5,000</b></td>
+                <td>UPI</td>
+                <td style="color:#10B981;">Successful</td>
+                <td><button class="btn btn-secondary btn-sm">View Receipt</button></td>
+              </tr>
+              <tr>
+                <td>2024-05-16</td>
+                <td>Anonymous</td>
+                <td><b>₹ 1,100</b></td>
+                <td>Credit Card</td>
+                <td style="color:#10B981;">Successful</td>
+                <td><button class="btn btn-secondary btn-sm">View Receipt</button></td>
+              </tr>
+              <tr>
+                <td>2024-05-15</td>
+                <td>Arjun Singh</td>
+                <td><b>₹ 10,000</b></td>
+                <td>Bank Transfer</td>
+                <td style="color:#F59E0B;">Pending</td>
+                <td><button class="btn btn-secondary btn-sm">Verify</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

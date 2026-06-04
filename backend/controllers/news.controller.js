@@ -3,7 +3,9 @@ const { pickImageUrl } = require("../utils/validate");
 
 async function listNews(_req, res, next) {
   try {
-    const news = await News.find().sort({ createdAt: -1 }).lean();
+    const isAdmin = Boolean(_req.user?.id);
+    const query = isAdmin ? {} : { published: true };
+    const news = await News.find(query).sort({ createdAt: -1 }).lean();
     res.json({ news });
   } catch (err) {
     next(err);
@@ -11,13 +13,15 @@ async function listNews(_req, res, next) {
 }
 
 function buildNewsPayload(body, existing) {
-  const title = String(body.title || "").trim();
-  const date = String(body.date || "").trim();
-  const url = String(body.url || "").trim();
-  const excerpt = String(body.excerpt || body.content || "").trim();
-  const content = String(body.content || body.excerpt || "").trim();
+  const title = String(body.title ?? existing?.title ?? "").trim();
+  const date = String(body.date ?? existing?.date ?? "").trim();
+  const url = String(body.url ?? existing?.url ?? "").trim();
+  const excerpt = String(body.excerpt ?? body.content ?? existing?.excerpt ?? existing?.content ?? "").trim();
+  const content = String(body.content ?? body.excerpt ?? existing?.content ?? existing?.excerpt ?? "").trim();
   const imageUrl = pickImageUrl(body) || (existing && existing.imageUrl) || "";
-  return { title, date, url, excerpt, content, imageUrl };
+  const published =
+    body.published === undefined ? (existing ? existing.published : true) : Boolean(body.published);
+  return { title, date, url, excerpt, content, imageUrl, published };
 }
 
 async function createNews(req, res, next) {

@@ -1,5 +1,6 @@
 const express = require("express");
 const { requireAuth } = require("../middleware/auth.middleware");
+const { activityLogger } = require("../middleware/activity.middleware");
 const {
   listGallery,
   createGalleryItem,
@@ -10,8 +11,8 @@ const {
 const router = express.Router();
 
 router.get("/", listGallery);
-router.post("/", requireAuth, createGalleryItem);
-router.put("/:id", requireAuth, updateGalleryItem);
-router.delete("/:id", requireAuth, deleteGalleryItem);
+router.post("/", requireAuth, activityLogger("gallery:create"), createGalleryItem);
+router.put("/:id", requireAuth, activityLogger("gallery:update"), updateGalleryItem);
+router.delete("/:id", requireAuth, activityLogger("gallery:delete"), deleteGalleryItem);
 
 module.exports = router;

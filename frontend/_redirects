@@ -1,0 +1,3 @@
+/bskkmrj-admin  /bskkmrj-admin/index.html  200
+/bskkmrj-admin/*  /bskkmrj-admin/:splat  200
+

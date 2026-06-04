@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BSKKMRJ Admin – Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/admin.css" />
+</head>
+<body class="admin-bg">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="../assets/images/LOGO.jpeg" alt="Logo">
+          BSKKMRJ Admin
+        </div>
+        <button id="sidebarToggle" class="sidebar-toggle" type="button">☰</button>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="./dashboard.html" class="nav-link active">Dashboard</a>
+                <a href="./manage-news.html" class="nav-link">Manage News</a>
+                <a href="./add-event.html" class="nav-link">Manage Events</a>
+                <a href="./manage-gallery.html" class="nav-link">Manage Gallery</a>
+                <a href="./manage-team.html" class="nav-link">Manage Team</a>
+                <a href="./manage-about.html" class="nav-link">Manage About</a>
+                <a href="./manage-documents.html" class="nav-link">Documents</a>
+                <a href="./settings.html" class="nav-link">Settings</a>
+                <a href="./join-requests.html" class="nav-link">Join Requests</a>
+                <a href="./contact-messages.html" class="nav-link">Messages</a>
+        <button id="logoutBtn" class="nav-link nav-link-danger" type="button">Sign out</button>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-main-header">
+        <h1>Dashboard</h1>
+        <p>Overview of content currently published on the BSKKMRJ site.</p>
+      </header>
+
+      <section class="admin-section">
+        <div class="stats-grid" id="statsGrid">
+          <article class="stat-card">
+            <h2>Total News</h2>
+            <p class="stat-number" id="statNews">–</p>
+          </article>
+          <article class="stat-card">
+            <h2>Total Events</h2>
+            <p class="stat-number" id="statEvents">–</p>
+          </article>
+          <article class="stat-card">
+            <h2>Gallery Items</h2>
+            <p class="stat-number" id="statGallery">–</p>
+          </article>
+          <article class="stat-card">
+            <h2>Team Members</h2>
+            <p class="stat-number" id="statTeam">–</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="admin-section">
+        <header class="admin-section-header">
+          <h2>Recent News</h2>
+        </header>
+        <div id="recentNews" class="table-shell"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./js/admin-api.js"></script>
+  <script src="./js/dashboard.js"></script>
+<!--  <script>
+if(localStorage.getItem("adminLoggedIn") !== "true"){
+    window.location.href = "index.html"; 
+}
+</script>
+
+<button onclick="logout()">Logout</button>
+
+<script>
+function logout(){
+    localStorage.removeItem("adminLoggedIn");
+    window.location.href = "index.html";
+}
+</script> -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

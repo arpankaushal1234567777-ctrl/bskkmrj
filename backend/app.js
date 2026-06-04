@@ -12,11 +12,21 @@ const contactRoutes = require("./routes/contact.routes");
 const teamRoutes = require("./routes/team.routes");
 const aboutRoutes = require("./routes/about.routes");
 const joinRoutes = require("./routes/join.routes");
+const settingsRoutes = require("./routes/settings.routes");
+const documentRoutes = require("./routes/document.routes");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json({ limit: "15mb" }));
+app.disable("x-powered-by");
+
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("X-Frame-Options", "DENY");
+  next();
+});
 
 app.use((req, _res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
@@ -39,6 +49,8 @@ app.use("/api/contact", contactRoutes);
 app.use("/api/team", teamRoutes);
 app.use("/api/about", aboutRoutes);
 app.use("/api/join", joinRoutes);
+app.use("/api/settings", settingsRoutes);
+app.use("/api/documents", documentRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

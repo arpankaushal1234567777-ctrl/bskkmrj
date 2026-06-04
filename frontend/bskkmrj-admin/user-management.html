@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BSKKMRJ Admin – User Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/admin.css" />
+</head>
+<body class="admin-bg">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="../assets/images/LOGO.jpeg" alt="Logo">
+          BSKKMRJ Admin
+        </div>
+        <button id="sidebarToggle" class="sidebar-toggle" type="button">☰</button>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="./dashboard.html" class="nav-link">Dashboard</a>
+                <a href="./manage-news.html" class="nav-link">Manage News</a>
+                <a href="./add-event.html" class="nav-link">Manage Events</a>
+                <a href="./manage-gallery.html" class="nav-link">Manage Gallery</a>
+                <a href="./manage-team.html" class="nav-link">Manage Team</a>
+                <a href="./manage-about.html" class="nav-link">Manage About</a>
+                <a href="./join-requests.html" class="nav-link">Join Requests</a>
+                <a href="./contact-messages.html" class="nav-link">Messages</a>
+        <button id="logoutBtn" class="nav-link nav-link-danger" type="button">Sign out</button>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-main-header">
+        <h1>User Management</h1>
+        <p>Manage registered members, administrators, and staff roles.</p>
+      </header>
+
+      <section class="admin-section">
+        <header class="admin-section-header">
+          <h2>Add New User</h2>
+        </header>
+        <form class="form" onsubmit="event.preventDefault(); alert('User Added');">
+          <div class="grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <label><span>Full Name</span><input type="text" required /></label>
+            <label><span>Email Address</span><input type="email" required /></label>
+          </div>
+          <label>
+            <span>Role</span>
+            <select required>
+              <option value="user">Standard User</option>
+              <option value="editor">Content Editor</option>
+              <option value="admin">Administrator</option>
+            </select>
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Create User</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="admin-section">
+        <header class="admin-section-header">
+          <h2>Current Users</h2>
+        </header>
+        <input type="text" placeholder="Search users by name or email..." class="admin-search">
+        <div class="table-shell">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Sarvesh Pathak</td>
+                <td>sarvesh@bskkmrj.com</td>
+                <td>Administrator</td>
+                <td style="color:#10B981;">Active</td>
+                <td>
+                  <div class="table-actions">
+                    <button class="btn btn-secondary btn-sm">Edit</button>
+                    <button class="btn btn-danger btn-sm">Suspend</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

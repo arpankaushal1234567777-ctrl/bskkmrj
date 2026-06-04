@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BSKKMRJ Admin – Manage Team</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/admin.css" />
+</head>
+<body class="admin-bg">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="../assets/images/LOGO.jpeg" alt="Logo">
+          BSKKMRJ Admin
+        </div>
+        <button id="sidebarToggle" class="sidebar-toggle" type="button">☰</button>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="./dashboard.html" class="nav-link">Dashboard</a>
+                <a href="./manage-news.html" class="nav-link">Manage News</a>
+                <a href="./add-event.html" class="nav-link">Manage Events</a>
+                <a href="./manage-gallery.html" class="nav-link">Manage Gallery</a>
+                <a href="./manage-team.html" class="nav-link">Manage Team</a>
+                <a href="./manage-about.html" class="nav-link">Manage About</a>
+                <a href="./manage-documents.html" class="nav-link">Documents</a>
+                <a href="./settings.html" class="nav-link">Settings</a>
+                <a href="./join-requests.html" class="nav-link">Join Requests</a>
+                <a href="./contact-messages.html" class="nav-link">Messages</a>
+        <button id="logoutBtn" class="nav-link nav-link-danger" type="button">Sign out</button>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-main-header">
+        <h1>Manage Team</h1>
+        <p>Maintain National and State team members shown on the site.</p>
+      </header>
+
+      <section class="admin-section">
+        <header class="admin-section-header">
+          <h2>Create / Edit Member</h2>
+        </header>
+        <form id="teamForm" class="form">
+          <input type="hidden" id="teamId" />
+          <label>
+            <span>Scope</span>
+            <select id="teamScope">
+              <option value="national">National Team</option>
+              <option value="state">State Team</option>
+            </select>
+          </label>
+          <label>
+            <span>Name</span>
+            <input type="text" id="teamName" required />
+          </label>
+          <label>
+            <span>Position</span>
+            <input type="text" id="teamRole" required />
+          </label>
+          <label>
+            <span>Phone</span>
+            <input type="text" id="teamPhone" />
+          </label>
+          <label>
+            <span>Photo URL</span>
+            <input type="url" id="teamPhotoUrl" placeholder="https://... or upload below" />
+          </label>
+          <label>
+            <span>Upload photo</span>
+            <input type="file" id="teamPhoto" accept="image/*" />
+            <img id="teamPreview" style="max-width:120px;margin-top:10px;" hidden alt="" />
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="teamSaveBtn">Save</button>
+            <button type="button" class="btn btn-secondary" id="teamResetBtn">Reset</button>
+          </div>
+          <p id="teamFormMsg" class="form-message" hidden></p>
+        </form>
+      </section>
+
+      <section class="admin-section">
+        <header class="admin-section-header">
+          <h2>National Team</h2>
+        </header>
+
+        <input type="text" id="searchNational" placeholder="Search national team..." class="admin-search">
+
+        <div id="nationalTeamTable" class="table-shell"></div>
+      </section>
+
+      <section class="admin-section">
+        <header class="admin-section-header">
+          <h2>State Team</h2>
+        </header>
+
+        <input type="text" id="searchState" placeholder="Search state team..." class="admin-search">
+
+        <div id="stateTeamTable" class="table-shell"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./js/admin-api.js"></script>
+  <script src="./js/admin-utils.js"></script>
+  <script src="./js/manage-team.js"></script>
+
+ <!-- <script>
+
+function preview(input, target){
+
+const file = input.files[0];
+
+if(!file) return;
+
+const reader = new FileReader();
+
+reader.onload = function(e){
+document.getElementById(target).src = e.target.result;
+}
+
+reader.readAsDataURL(file);
+
+}
+
+document.getElementById("newsImage")?.addEventListener("change",function(){
+preview(this,"newsPreview");
+});
+
+document.getElementById("eventImage")?.addEventListener("change",function(){
+preview(this,"eventPreview");
+});
+
+document.getElementById("galleryImage")?.addEventListener("change",function(){
+preview(this,"galleryPreview");
+});
+
+document.getElementById("teamPhoto")?.addEventListener("change",function(){
+preview(this,"teamPreview");
+});
+
+</script> -->
+
+<script>
+
+document.querySelectorAll("input[type=file]").forEach(input=>{
+
+input.addEventListener("dragover",e=>{
+e.preventDefault();
+input.style.border="2px dashed #007bff";
+});
+
+input.addEventListener("dragleave",()=>{
+input.style.border="";
+});
+
+input.addEventListener("drop",e=>{
+
+e.preventDefault();
+
+input.files = e.dataTransfer.files;
+
+});
+
+});
+
+</script>
+</body>
+</html>

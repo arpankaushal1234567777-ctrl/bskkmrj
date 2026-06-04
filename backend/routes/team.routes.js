@@ -1,5 +1,6 @@
 const express = require("express");
 const { requireAuth } = require("../middleware/auth.middleware");
+const { activityLogger } = require("../middleware/activity.middleware");
 const {
   getNationalTeam,
   getStateTeam,
@@ -16,9 +17,9 @@ const router = express.Router();
 router.get("/national", getNationalTeam);
 router.get("/state", getStateTeam);
 
-router.post("/", requireAuth, createTeamMemberUnified);
-router.put("/:id", requireAuth, updateTeamMemberUnified);
-router.delete("/:id", requireAuth, deleteTeamMemberUnified);
+router.post("/", requireAuth, activityLogger("team:create"), createTeamMemberUnified);
+router.put("/:id", requireAuth, activityLogger("team:update"), updateTeamMemberUnified);
+router.delete("/:id", requireAuth, activityLogger("team:delete"), deleteTeamMemberUnified);
 
 router.post("/national", requireAuth, (req, res, next) =>
   createTeamMember("national", req, res, next)
@@ -41,4 +42,3 @@ router.delete("/state/:id", requireAuth, (req, res, next) =>
 );
 
 module.exports = router;
-
