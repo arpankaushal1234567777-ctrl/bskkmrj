@@ -1,5 +1,30 @@
 (() => {
-  const API_BASE = "https://bskkmrj-api.onrender.com/api";
+  const PROD_API_BASE = "https://bskkmrj-api.onrender.com/api";
+
+  function detectApiBase() {
+    const configured =
+      window.BSKKMRJ_API_BASE ||
+      window.localStorage.getItem("bskkm_api_base") ||
+      document.querySelector('meta[name="bskkmrj-api-base"]')?.content;
+
+    if (configured) return configured.replace(/\/+$/, "");
+
+    const host = window.location.hostname;
+    const isLocalHost =
+      host === "localhost" ||
+      host === "127.0.0.1" ||
+      host === "::1" ||
+      host.endsWith(".local");
+
+    if (isLocalHost) {
+      return `${window.location.origin}/api`;
+    }
+
+    return PROD_API_BASE;
+  }
+
+  const API_BASE =
+    detectApiBase();
 
   function getToken() {
     return window.localStorage.getItem("bskkm_admin_token") || "";
@@ -42,20 +67,35 @@
     const url = buildUrl(path);
     const token = getToken();
     const headers = Object.assign(
-      { "Content-Type": "application/json" },
+      {},
       options.headers || {},
       token ? { Authorization: `Bearer ${token}` } : {}
     );
+    const requestBody = options.body;
+
+    if (!(requestBody instanceof FormData) && !headers["Content-Type"]) {
+      headers["Content-Type"] = "application/json";
+    }
 
     const res = await fetch(url, { ...options, headers });
+    if (res.status === 204) return null;
+
     const isJson = res.headers.get("content-type")?.includes("application/json");
-    const body = isJson ? await res.json() : await res.text();
+    const responseBody = isJson ? await res.json() : await res.text();
 
     if (!res.ok) {
-      const message = body && body.error ? body.error : `Request failed: ${res.status}`;
+      const message =
+        responseBody && responseBody.error ? responseBody.error : `Request failed: ${res.status}`;
+      console.error("Admin API request failed", {
+        url,
+        method: options.method || "GET",
+        status: res.status,
+        response: responseBody,
+      });
       throw new Error(message);
     }
-    return body;
+
+    return responseBody;
   }
 
   async function requireAuthOrRedirect() {
@@ -106,8 +146,25 @@
     }, 3500);
   }
 
+  if (!window.__BSKKMRJ_ADMIN_ERROR_HANDLERS__) {
+    window.__BSKKMRJ_ADMIN_ERROR_HANDLERS__ = true;
+
+    window.addEventListener("unhandledrejection", (event) => {
+      const reason = event.reason;
+      const message = reason && reason.message ? reason.message : "Unexpected error";
+      console.error("Unhandled admin promise rejection", reason);
+      showToast(message, "error");
+    });
+
+    window.addEventListener("error", (event) => {
+      const error = event.error || event.message;
+      console.error("Unhandled admin error", error);
+    });
+  }
+
   window.BSKKMRJ_ADMIN = {
     api,
+    buildUrl,
     getToken,
     setToken,
     requireAuthOrRedirect,

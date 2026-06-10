@@ -1,5 +1,11 @@
 const { NationalTeamMember, StateTeamMember } = require("../models/team");
-const { pickImageUrl } = require("../utils/validate");
+const {
+  assertObjectId,
+  isPhone,
+  pickImageUrl,
+  sanitizePhone,
+  sanitizeText,
+} = require("../utils/validate");
 
 function getModel(scope) {
   return scope === "state" ? StateTeamMember : NationalTeamMember;
@@ -9,11 +15,11 @@ function normalizeScope(scope) {
   return scope === "state" ? "state" : "national";
 }
 
-function buildMemberPayload(body) {
-  const name = String(body.name || "").trim();
-  const role = String(body.role || body.position || "").trim();
-  const photo = String(body.photo || "").trim() || pickImageUrl(body);
-  const phone = String(body.phone || "").trim();
+function buildMemberPayload(body, existing) {
+  const name = sanitizeText(body.name ?? existing?.name ?? "", 120);
+  const role = sanitizeText(body.role ?? body.position ?? existing?.role ?? "", 150);
+  const photo = sanitizeText(body.photo ?? "", 2048) || pickImageUrl(body) || existing?.photo || "";
+  const phone = sanitizePhone(body.phone ?? existing?.phone ?? "");
   return { name, role, photo, phone };
 }
 
@@ -41,6 +47,9 @@ async function createTeamMember(scope, req, res, next) {
     if (!payload.name || !payload.role) {
       return res.status(400).json({ error: "Name and position are required" });
     }
+    if (payload.phone && !isPhone(payload.phone)) {
+      return res.status(400).json({ error: "Valid phone is required" });
+    }
     const Model = getModel(scope);
     const doc = await Model.create(payload);
     res.status(201).json(doc);
@@ -56,15 +65,18 @@ async function createTeamMemberUnified(req, res, next) {
 
 async function updateTeamMember(scope, req, res, next) {
   try {
-    const payload = buildMemberPayload(req.body);
+    const Model = getModel(scope);
+    const { id } = req.params;
+    assertObjectId(id, "Member");
+    const existing = await Model.findById(id);
+    if (!existing) return res.status(404).json({ error: "Member not found" });
+    const payload = buildMemberPayload(req.body, existing);
     if (!payload.name || !payload.role) {
       return res.status(400).json({ error: "Name and position are required" });
     }
-    const Model = getModel(scope);
-    const { id } = req.params;
-    const existing = await Model.findById(id);
-    if (!existing) return res.status(404).json({ error: "Member not found" });
-    if (!payload.photo) payload.photo = existing.photo;
+    if (payload.phone && !isPhone(payload.phone)) {
+      return res.status(400).json({ error: "Valid phone is required" });
+    }
     const doc = await Model.findByIdAndUpdate(id, payload, { new: true });
     res.json(doc);
   } catch (err) {
@@ -81,6 +93,7 @@ async function deleteTeamMember(scope, req, res, next) {
   try {
     const Model = getModel(scope);
     const { id } = req.params;
+    assertObjectId(id, "Member");
     const doc = await Model.findByIdAndDelete(id);
     if (!doc) return res.status(404).json({ error: "Member not found" });
     res.status(204).end();

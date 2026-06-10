@@ -1,4 +1,13 @@
 const { Settings } = require("../models/settings");
+const {
+  isEmail,
+  isPhone,
+  sanitizeEmail,
+  sanitizePhone,
+  sanitizeRichText,
+  sanitizeText,
+  sanitizeUrl,
+} = require("../utils/validate");
 
 async function ensureSettingsDoc() {
   let doc = await Settings.findOne();
@@ -32,27 +41,31 @@ async function updateSettings(req, res, next) {
     const doc = await ensureSettingsDoc();
     const body = req.body || {};
 
-    doc.siteTitle = String(body.siteTitle ?? doc.siteTitle ?? "").trim() || "BSKKMRJ";
-    doc.seoDescription = String(body.seoDescription ?? doc.seoDescription ?? "").trim();
-    doc.seoKeywords = String(body.seoKeywords ?? doc.seoKeywords ?? "").trim();
+    doc.siteTitle = sanitizeText(body.siteTitle ?? doc.siteTitle ?? "", 120) || "BSKKMRJ";
+    doc.seoDescription = sanitizeRichText(body.seoDescription ?? doc.seoDescription ?? "", 320);
+    doc.seoKeywords = sanitizeText(body.seoKeywords ?? doc.seoKeywords ?? "", 320);
 
     const social = body.socialLinks || {};
     doc.socialLinks = {
-      facebook: String(social.facebook ?? doc.socialLinks?.facebook ?? "").trim(),
-      instagram: String(social.instagram ?? doc.socialLinks?.instagram ?? "").trim(),
-      twitter: String(social.twitter ?? doc.socialLinks?.twitter ?? "").trim(),
-      youtube: String(social.youtube ?? doc.socialLinks?.youtube ?? "").trim(),
-      whatsapp: String(social.whatsapp ?? doc.socialLinks?.whatsapp ?? "").trim(),
+      facebook: sanitizeUrl(social.facebook ?? doc.socialLinks?.facebook ?? ""),
+      instagram: sanitizeUrl(social.instagram ?? doc.socialLinks?.instagram ?? ""),
+      twitter: sanitizeUrl(social.twitter ?? doc.socialLinks?.twitter ?? ""),
+      youtube: sanitizeUrl(social.youtube ?? doc.socialLinks?.youtube ?? ""),
+      whatsapp: sanitizeUrl(social.whatsapp ?? doc.socialLinks?.whatsapp ?? ""),
     };
 
     const contact = body.contact || {};
+    const phone = sanitizePhone(contact.phone ?? doc.contact?.phone ?? "");
+    const email = sanitizeEmail(contact.email ?? doc.contact?.email ?? "");
     doc.contact = {
-      phone: String(contact.phone ?? doc.contact?.phone ?? "").trim(),
-      email: String(contact.email ?? doc.contact?.email ?? "").trim(),
-      address: String(contact.address ?? doc.contact?.address ?? "").trim(),
+      phone,
+      email,
+      address: sanitizeText(contact.address ?? doc.contact?.address ?? "", 300),
     };
+    if (phone && !isPhone(phone)) return res.status(400).json({ error: "Valid contact phone is required" });
+    if (email && !isEmail(email)) return res.status(400).json({ error: "Valid contact email is required" });
 
-    doc.footerText = String(body.footerText ?? doc.footerText ?? "").trim();
+    doc.footerText = sanitizeRichText(body.footerText ?? doc.footerText ?? "", 1000);
 
     await doc.save();
     res.json(toPublicShape(doc));
@@ -62,4 +75,3 @@ async function updateSettings(req, res, next) {
 }
 
 module.exports = { getSettings, updateSettings };
-

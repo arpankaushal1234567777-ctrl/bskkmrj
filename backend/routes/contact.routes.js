@@ -1,5 +1,7 @@
 const express = require("express");
-const { requireAuth } = require("../middleware/auth.middleware");
+const { requireAuth, requireRole } = require("../middleware/auth.middleware");
+const { activityLogger } = require("../middleware/activity.middleware");
+const { validateObjectIdParam } = require("../middleware/validate.middleware");
 const {
   getContactInfo,
   createContactMessage,
@@ -12,8 +14,8 @@ const router = express.Router();
 
 router.get("/info", getContactInfo);
 router.post("/", createContactMessage);
-router.get("/", requireAuth, listContactMessages);
-router.patch("/:id/read", requireAuth, markContactMessageRead);
-router.delete("/:id", requireAuth, deleteContactMessage);
+router.get("/", requireAuth, requireRole("admin", "editor"), listContactMessages);
+router.patch("/:id/read", requireAuth, requireRole("admin", "editor"), validateObjectIdParam("id", "Message"), activityLogger("contact-message:read"), markContactMessageRead);
+router.delete("/:id", requireAuth, requireRole("admin", "editor"), validateObjectIdParam("id", "Message"), activityLogger("contact-message:delete"), deleteContactMessage);
 
 module.exports = router;

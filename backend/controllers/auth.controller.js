@@ -4,11 +4,16 @@ const { User } = require("../models/User");
 const { connectDb } = require("../config/db");
 const { AdminSession } = require("../models/adminSession");
 const crypto = require("crypto");
+const {
+  parseBoolean,
+  sanitizeEmail,
+  sanitizeText,
+} = require("../utils/validate");
 
 async function ensureAdminSeeded() {
   await connectDb();
-  const adminEmail = process.env.ADMIN_EMAIL || "admin@local";
-  const adminUsername = process.env.ADMIN_USERNAME || process.env.ADMIN_EMAIL || "admin";
+  const adminEmail = sanitizeEmail(process.env.ADMIN_EMAIL || "admin@local");
+  const adminUsername = sanitizeText(process.env.ADMIN_USERNAME || process.env.ADMIN_EMAIL || "admin", 100).toLowerCase();
   const adminPassword = process.env.ADMIN_PASSWORD;
 
   if (!adminPassword) {
@@ -26,10 +31,13 @@ async function login(req, res, next) {
     await ensureAdminSeeded();
 
     const { email, username, password, rememberMe } = req.body || {};
-    const identifier = String(username || email || "").trim();
+    const identifier = sanitizeText(username || email, 320).toLowerCase();
     const pass = String(password || "").trim();
     if (!identifier || !pass) {
       return res.status(400).json({ error: "Username/email and password are required." });
+    }
+    if (pass.length < 8 || pass.length > 128) {
+      return res.status(400).json({ error: "Invalid credentials." });
     }
 
     const jwtSecret = process.env.JWT_SECRET;
@@ -39,13 +47,13 @@ async function login(req, res, next) {
 
     const user = await User.findOne({
       $or: [{ email: identifier }, { username: identifier }],
-    });
+    }).select("+passwordHash");
     if (!user) return res.status(401).json({ error: "Invalid credentials." });
 
     const ok = await bcrypt.compare(pass, user.passwordHash);
     if (!ok) return res.status(401).json({ error: "Invalid credentials." });
 
-    const expiresIn = rememberMe ? "30d" : "12h";
+    const expiresIn = parseBoolean(rememberMe) ? "30d" : "12h";
     const jti = crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(16).toString("hex");
     const payload = { id: user._id, email: user.email, username: user.username, role: user.role, jti };
     const token = jwt.sign(payload, jwtSecret, { expiresIn });

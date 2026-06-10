@@ -1,5 +1,10 @@
 const { Event } = require("../models/event");
-const { pickImageUrl } = require("../utils/validate");
+const {
+  assertObjectId,
+  pickImageUrl,
+  sanitizeRichText,
+  sanitizeText,
+} = require("../utils/validate");
 
 async function listEvents(_req, res, next) {
   try {
@@ -11,10 +16,10 @@ async function listEvents(_req, res, next) {
 }
 
 function buildEventPayload(body, existing) {
-  const title = String(body.title || "").trim();
-  const date = String(body.date || "").trim();
-  const location = String(body.location || "").trim();
-  const description = String(body.description || "").trim();
+  const title = sanitizeText(body.title ?? existing?.title ?? "", 200);
+  const date = sanitizeText(body.date ?? existing?.date ?? "", 100);
+  const location = sanitizeText(body.location ?? existing?.location ?? "", 200);
+  const description = sanitizeRichText(body.description ?? existing?.description ?? "", 5000);
   const imageUrl = pickImageUrl(body) || (existing && existing.imageUrl) || "";
   return { title, date, location, description, imageUrl };
 }
@@ -35,6 +40,7 @@ async function createEvent(req, res, next) {
 async function updateEvent(req, res, next) {
   try {
     const { id } = req.params;
+    assertObjectId(id, "Event");
     const existing = await Event.findById(id);
     if (!existing) return res.status(404).json({ error: "Event not found" });
     const payload = buildEventPayload(req.body, existing);
@@ -51,6 +57,7 @@ async function updateEvent(req, res, next) {
 async function deleteEvent(req, res, next) {
   try {
     const { id } = req.params;
+    assertObjectId(id, "Event");
     const ev = await Event.findByIdAndDelete(id);
     if (!ev) return res.status(404).json({ error: "Event not found" });
     res.status(204).end();

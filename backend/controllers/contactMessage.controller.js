@@ -1,5 +1,13 @@
 const { ContactMessage } = require("../models/contactMessage");
-const { isEmail } = require("../utils/validate");
+const {
+  assertObjectId,
+  isEmail,
+  isPhone,
+  sanitizeEmail,
+  sanitizePhone,
+  sanitizeRichText,
+  sanitizeText,
+} = require("../utils/validate");
 
 function getContactInfo(_req, res) {
   res.json({
@@ -14,14 +22,15 @@ function getContactInfo(_req, res) {
 
 async function createContactMessage(req, res, next) {
   try {
-    const name = String(req.body.name || "").trim();
-    const email = String(req.body.email || "").trim().toLowerCase();
-    const phone = String(req.body.phone || "").trim();
-    const subject = String(req.body.subject || "").trim();
-    const message = String(req.body.message || "").trim();
+    const name = sanitizeText(req.body.name, 120);
+    const email = sanitizeEmail(req.body.email);
+    const phone = sanitizePhone(req.body.phone);
+    const subject = sanitizeText(req.body.subject, 200);
+    const message = sanitizeRichText(req.body.message, 5000);
 
     if (!name) return res.status(400).json({ error: "Name is required" });
     if (!email || !isEmail(email)) return res.status(400).json({ error: "Valid email is required" });
+    if (phone && !isPhone(phone)) return res.status(400).json({ error: "Valid phone is required" });
     if (!message) return res.status(400).json({ error: "Message is required" });
 
     const doc = await ContactMessage.create({ name, email, phone, subject, message });
@@ -42,6 +51,7 @@ async function listContactMessages(_req, res, next) {
 
 async function markContactMessageRead(req, res, next) {
   try {
+    assertObjectId(req.params.id, "Message");
     const doc = await ContactMessage.findByIdAndUpdate(
       req.params.id,
       { read: true },
@@ -56,6 +66,7 @@ async function markContactMessageRead(req, res, next) {
 
 async function deleteContactMessage(req, res, next) {
   try {
+    assertObjectId(req.params.id, "Message");
     const doc = await ContactMessage.findByIdAndDelete(req.params.id);
     if (!doc) return res.status(404).json({ error: "Message not found" });
     res.status(204).end();

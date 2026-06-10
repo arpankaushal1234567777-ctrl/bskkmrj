@@ -1,5 +1,7 @@
 const express = require("express");
-const { requireAuth } = require("../middleware/auth.middleware");
+const { requireAuth, requireRole } = require("../middleware/auth.middleware");
+const { activityLogger } = require("../middleware/activity.middleware");
+const { validateObjectIdParam } = require("../middleware/validate.middleware");
 const {
   createJoinRequest,
   listJoinRequests,
@@ -9,7 +11,7 @@ const {
 const router = express.Router();
 
 router.post("/", createJoinRequest);
-router.get("/", requireAuth, listJoinRequests);
-router.patch("/:id", requireAuth, updateJoinRequestStatus);
+router.get("/", requireAuth, requireRole("admin", "editor"), listJoinRequests);
+router.patch("/:id", requireAuth, requireRole("admin", "editor"), validateObjectIdParam("id", "Join request"), activityLogger("join-request:update"), updateJoinRequestStatus);
 
 module.exports = router;

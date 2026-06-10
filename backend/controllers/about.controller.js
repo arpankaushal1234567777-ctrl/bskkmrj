@@ -1,4 +1,5 @@
 const { About } = require("../models/about");
+const { sanitizeRichText, sanitizeText } = require("../utils/validate");
 
 const DEFAULT_ABOUT = {
   title: "भारतीय श्रमिक कामगार कर्मचारी महासंघ राजस्थान :",
@@ -41,11 +42,11 @@ async function getAbout(_req, res, next) {
 async function updateAbout(req, res, next) {
   try {
     const doc = await ensureAboutDoc();
-    const title = String(req.body.title ?? doc.title ?? "").trim();
-    const mission = String(req.body.mission ?? doc.mission ?? "").trim();
-    const vision = String(req.body.vision ?? doc.vision ?? "").trim();
-    const description = String(req.body.description ?? doc.description ?? "").trim();
-    const history = String(req.body.history ?? doc.history ?? "").trim();
+    const title = sanitizeText(req.body.title ?? doc.title ?? "", 200);
+    const mission = sanitizeRichText(req.body.mission ?? doc.mission ?? "", 5000);
+    const vision = sanitizeRichText(req.body.vision ?? doc.vision ?? "", 5000);
+    const description = sanitizeRichText(req.body.description ?? doc.description ?? "", 15000);
+    const history = sanitizeRichText(req.body.history ?? doc.history ?? "", 15000);
 
     if (!title && !description) {
       return res.status(400).json({ error: "Title or description is required" });

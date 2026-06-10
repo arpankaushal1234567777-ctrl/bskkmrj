@@ -23,7 +23,7 @@ async function requireAuth(req, res, next) {
     }
 
     const session = await AdminSession.findOne({ jti: payload.jti }).lean();
-    if (!session || session.revokedAt) {
+    if (!session || session.revokedAt || new Date(session.expiresAt).getTime() <= Date.now()) {
       return res.status(401).json({ error: "Invalid or expired token" });
     }
     req.user = payload;
@@ -43,7 +43,7 @@ async function optionalAuth(req, _res, next) {
     const payload = jwt.verify(token, secret);
     if (!payload?.jti) return next();
     const session = await AdminSession.findOne({ jti: payload.jti }).lean();
-    if (!session || session.revokedAt) return next();
+    if (!session || session.revokedAt || new Date(session.expiresAt).getTime() <= Date.now()) return next();
     req.user = payload;
     req.session = session;
   } catch (_e) {

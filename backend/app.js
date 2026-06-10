@@ -1,8 +1,10 @@
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
 
 const { notFound, errorHandler } = require("./middleware/error.middleware");
 const { connectDb } = require("./config/db");
+const { createCorsOptions } = require("./config/security");
 
 const authRoutes = require("./routes/auth.routes");
 const newsRoutes = require("./routes/news.routes");
@@ -17,13 +19,21 @@ const documentRoutes = require("./routes/document.routes");
 
 const app = express();
 
-app.use(cors());
+app.set("trust proxy", 1);
+app.use(cors(createCorsOptions()));
+app.use(
+  helmet({
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: false,
+  })
+);
 app.use(express.json({ limit: "15mb" }));
+app.use(express.urlencoded({ extended: false, limit: "15mb" }));
 app.disable("x-powered-by");
 
 app.use((_req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   res.setHeader("X-Frame-Options", "DENY");
   next();
 });

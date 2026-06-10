@@ -1,5 +1,10 @@
 const { GalleryItem } = require("../models/gallery");
-const { pickImageUrl } = require("../utils/validate");
+const {
+  assertObjectId,
+  pickImageUrl,
+  sanitizeRichText,
+  sanitizeText,
+} = require("../utils/validate");
 
 async function listGallery(_req, res, next) {
   try {
@@ -12,9 +17,9 @@ async function listGallery(_req, res, next) {
 
 async function createGalleryItem(req, res, next) {
   try {
-    const title = String(req.body.title || "").trim();
-    const date = String(req.body.date || "").trim();
-    const description = String(req.body.description || "").trim();
+    const title = sanitizeText(req.body.title, 200);
+    const date = sanitizeText(req.body.date, 100);
+    const description = sanitizeRichText(req.body.description, 3000);
     const imageUrl = pickImageUrl(req.body);
     if (!title || !date) {
       return res.status(400).json({ error: "Title and date are required" });
@@ -32,9 +37,10 @@ async function createGalleryItem(req, res, next) {
 async function updateGalleryItem(req, res, next) {
   try {
     const { id } = req.params;
-    const title = String(req.body.title || "").trim();
-    const date = String(req.body.date || "").trim();
-    const description = String(req.body.description || "").trim();
+    assertObjectId(id, "Gallery item");
+    const title = sanitizeText(req.body.title, 200);
+    const date = sanitizeText(req.body.date, 100);
+    const description = sanitizeRichText(req.body.description, 3000);
     const imageUrl = pickImageUrl(req.body);
     if (!title || !date) {
       return res.status(400).json({ error: "Title and date are required" });
@@ -60,6 +66,7 @@ async function updateGalleryItem(req, res, next) {
 async function deleteGalleryItem(req, res, next) {
   try {
     const { id } = req.params;
+    assertObjectId(id, "Gallery item");
     const item = await GalleryItem.findByIdAndDelete(id);
     if (!item) return res.status(404).json({ error: "Gallery item not found" });
     res.status(204).end();

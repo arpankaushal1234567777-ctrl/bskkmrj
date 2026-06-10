@@ -1,4 +1,11 @@
 const { Document } = require("../models/document");
+const {
+  assertObjectId,
+  parseBoolean,
+  pickDocumentUrl,
+  sanitizeRichText,
+  sanitizeText,
+} = require("../utils/validate");
 
 async function listDocuments(req, res, next) {
   try {
@@ -12,10 +19,10 @@ async function listDocuments(req, res, next) {
 }
 
 function buildPayload(body, existing) {
-  const title = String(body.title ?? existing?.title ?? "").trim();
-  const description = String(body.description ?? existing?.description ?? "").trim();
-  const fileUrl = String(body.fileUrl ?? existing?.fileUrl ?? "").trim();
-  const published = body.published === undefined ? existing?.published ?? true : Boolean(body.published);
+  const title = sanitizeText(body.title ?? existing?.title ?? "", 200);
+  const description = sanitizeRichText(body.description ?? existing?.description ?? "", 5000);
+  const fileUrl = pickDocumentUrl(body) || existing?.fileUrl || "";
+  const published = body.published === undefined ? existing?.published ?? true : parseBoolean(body.published, true);
   return { title, description, fileUrl, published };
 }
 
@@ -34,6 +41,7 @@ async function createDocument(req, res, next) {
 async function updateDocument(req, res, next) {
   try {
     const { id } = req.params;
+    assertObjectId(id, "Document");
     const existing = await Document.findById(id);
     if (!existing) return res.status(404).json({ error: "Document not found" });
     const payload = buildPayload(req.body, existing);
@@ -49,6 +57,7 @@ async function updateDocument(req, res, next) {
 async function deleteDocument(req, res, next) {
   try {
     const { id } = req.params;
+    assertObjectId(id, "Document");
     const doc = await Document.findByIdAndDelete(id);
     if (!doc) return res.status(404).json({ error: "Document not found" });
     res.status(204).end();
@@ -58,4 +67,3 @@ async function deleteDocument(req, res, next) {
 }
 
 module.exports = { listDocuments, createDocument, updateDocument, deleteDocument };
-

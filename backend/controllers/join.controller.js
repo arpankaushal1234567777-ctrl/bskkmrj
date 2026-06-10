@@ -1,18 +1,26 @@
 const { JoinRequest } = require("../models/joinRequest");
-const { isEmail } = require("../utils/validate");
+const {
+  assertObjectId,
+  isEmail,
+  isPhone,
+  sanitizeEmail,
+  sanitizePhone,
+  sanitizeRichText,
+  sanitizeText,
+} = require("../utils/validate");
 
 async function createJoinRequest(req, res, next) {
   try {
-    const name = String(req.body.name || "").trim();
-    const email = String(req.body.email || "").trim().toLowerCase();
-    const phone = String(req.body.phone || "").trim();
-    const address = String(req.body.address || "").trim();
-    const occupation = String(req.body.occupation || "").trim();
-    const message = String(req.body.message || "").trim();
+    const name = sanitizeText(req.body.name, 120);
+    const email = sanitizeEmail(req.body.email);
+    const phone = sanitizePhone(req.body.phone);
+    const address = sanitizeText(req.body.address, 300);
+    const occupation = sanitizeText(req.body.occupation, 150);
+    const message = sanitizeRichText(req.body.message, 5000);
 
     if (!name) return res.status(400).json({ error: "Name is required" });
     if (!email || !isEmail(email)) return res.status(400).json({ error: "Valid email is required" });
-    if (!phone) return res.status(400).json({ error: "Phone is required" });
+    if (!phone || !isPhone(phone)) return res.status(400).json({ error: "Valid phone is required" });
 
     const doc = await JoinRequest.create({
       name,
@@ -40,7 +48,8 @@ async function listJoinRequests(_req, res, next) {
 
 async function updateJoinRequestStatus(req, res, next) {
   try {
-    const status = String(req.body.status || "").trim();
+    assertObjectId(req.params.id, "Join request");
+    const status = sanitizeText(req.body.status, 20);
     if (!["pending", "approved", "rejected"].includes(status)) {
       return res.status(400).json({ error: "Status must be pending, approved, or rejected" });
     }
