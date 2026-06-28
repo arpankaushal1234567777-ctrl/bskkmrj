@@ -10,7 +10,7 @@
     const requests = data.requests || [];
     if (!requests.length) {
       tbody.innerHTML =
-        '<tr><td colspan="8" style="text-align:center;">No join requests found.</td></tr>';
+        '<tr><td colspan="10" style="text-align:center;">No join requests found.</td></tr>';
       return;
     }
     tbody.innerHTML = requests
@@ -23,6 +23,8 @@
           <td>${r.address || "—"}</td>
           <td>${r.occupation || "—"}</td>
           <td>${(r.message || "").slice(0, 40)}</td>
+          <td>${r.aadhaar_number || "—"}</td>
+          <td>${r.aadhaar_photo ? '<a href="' + r.aadhaar_photo + '" target="_blank">View</a>' : "—"}</td>
           <td><span class="badge">${r.status}</span></td>
           <td>
             <div class="table-actions">

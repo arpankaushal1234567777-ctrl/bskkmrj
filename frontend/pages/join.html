@@ -52,6 +52,14 @@
               <span>Message</span>
               <textarea name="message" rows="4"></textarea>
             </label>
+            <label>
+              <span>Aadhaar Card Number</span>
+              <input type="text" name="aadhaar_number" pattern="[0-9]{12}" maxlength="12" required title="Please enter exactly 12 digits" />
+            </label>
+            <label>
+              <span>Upload Aadhaar Card Photo</span>
+              <input type="file" name="aadhaar_photo" accept="image/jpeg, image/png, image/webp" required />
+            </label>
             <button class="btn btn-primary" type="submit" id="joinSubmitBtn">Submit Join Request</button>
             <p id="formFeedback" class="form-feedback" hidden></p>
           </form>
@@ -77,6 +85,23 @@
       fb.textContent = "Submitting...";
       if (btn) btn.disabled = true;
       const fd = new FormData(e.target);
+      const fileField = e.target.querySelector('input[name="aadhaar_photo"]');
+      let base64Photo = "";
+      if (fileField && fileField.files[0]) {
+        try {
+          base64Photo = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(new Error("Failed to read Aadhaar photo"));
+            reader.readAsDataURL(fileField.files[0]);
+          });
+        } catch (err) {
+          fb.className = "form-feedback form-feedback--error";
+          fb.textContent = err.message;
+          if (btn) btn.disabled = false;
+          return;
+        }
+      }
       try {
         await window.BSKKMRJ_API.apiPostJson("/api/join", {
           name: fd.get("name"),
@@ -85,6 +110,8 @@
           address: fd.get("address"),
           occupation: fd.get("occupation"),
           message: fd.get("message"),
+          aadhaar_number: fd.get("aadhaar_number"),
+          aadhaar_photo: base64Photo,
         });
         fb.className = "form-feedback form-feedback--success";
         fb.textContent = "Your join request was submitted successfully. We will contact you soon.";

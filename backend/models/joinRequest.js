@@ -8,6 +8,8 @@ const joinRequestSchema = new mongoose.Schema(
     address: { type: String, trim: true, default: "" },
     occupation: { type: String, trim: true, default: "" },
     message: { type: String, trim: true, default: "" },
+    aadhaar_number: { type: String, required: true, trim: true },
+    aadhaar_photo: { type: String, required: true, trim: true },
     status: {
       type: String,
       enum: ["pending", "approved", "rejected"],
