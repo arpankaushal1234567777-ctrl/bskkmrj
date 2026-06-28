@@ -24,7 +24,7 @@
           <td>${r.occupation || "—"}</td>
           <td>${(r.message || "").slice(0, 40)}</td>
           <td>${r.aadhaar_number || "—"}</td>
-          <td>${r.aadhaar_photo ? '<a href="' + r.aadhaar_photo + '" target="_blank">View</a>' : "—"}</td>
+          <td>${r.aadhaar_photo ? `<img src="${r.aadhaar_photo}" class="aadhaar-thumbnail" alt="Aadhaar" style="max-width:60px; max-height:60px; cursor:pointer; border-radius:4px; object-fit:cover;" />` : "—"}</td>
           <td><span class="badge">${r.status}</span></td>
           <td>
             <div class="table-actions">
@@ -50,6 +50,18 @@
           await refresh();
         } catch (err) {
           window.BSKKMRJ_ADMIN.showToast(err.message, "error");
+        }
+      });
+    });
+
+    tbody.querySelectorAll("img.aadhaar-thumbnail").forEach((img) => {
+      img.addEventListener("click", () => {
+        const w = window.open("");
+        if (w) {
+          w.document.write(`<html><body style="margin:0; display:flex; justify-content:center; align-items:center; background:#222; min-height:100vh;"><img src="${img.src}" style="max-width:100%; max-height:100vh;" /></body></html>`);
+          w.document.close();
+        } else {
+          window.BSKKMRJ_ADMIN.showToast("Popup blocked. Please allow popups to view the image.", "error");
         }
       });
     });
