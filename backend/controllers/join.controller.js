@@ -71,5 +71,16 @@ async function updateJoinRequestStatus(req, res, next) {
     next(err);
   }
 }
+async function deleteJoinRequests(req, res, next) {
+  try {
+    const ids = Array.isArray(req.body.ids) ? req.body.ids : [];
+    if (!ids.length) return res.status(400).json({ error: "No IDs provided" });
+    ids.forEach((id) => assertObjectId(id, "Join request"));
+    const result = await JoinRequest.deleteMany({ _id: { $in: ids } });
+    res.json({ ok: true, deletedCount: result.deletedCount });
+  } catch (err) {
+    next(err);
+  }
+}
 
-module.exports = { createJoinRequest, listJoinRequests, updateJoinRequestStatus };
+module.exports = { createJoinRequest, listJoinRequests, updateJoinRequestStatus, deleteJoinRequests };

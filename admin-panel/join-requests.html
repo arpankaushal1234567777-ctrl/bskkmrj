@@ -39,10 +39,14 @@
       </header>
 
       <section class="admin-section">
+        <div class="table-actions-bar" style="margin-bottom: 1rem; display: flex; justify-content: flex-start;">
+          <button id="bulkDeleteBtn" class="btn btn-danger" style="display:none; padding: 0.5rem 1rem; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete Selected (<span id="selectedCount">0</span>)</button>
+        </div>
         <div class="table-shell" style="overflow-x:auto;">
           <table>
             <thead>
               <tr>
+                <th style="width: 40px;"><input type="checkbox" id="selectAllCheckbox" /></th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Phone</th>
@@ -56,7 +60,7 @@
               </tr>
             </thead>
             <tbody id="requestsTableBody">
-              <tr><td colspan="10" style="text-align:center;">Loading requests...</td></tr>
+              <tr><td colspan="11" style="text-align:center;">Loading requests...</td></tr>
             </tbody>
           </table>
         </div>
