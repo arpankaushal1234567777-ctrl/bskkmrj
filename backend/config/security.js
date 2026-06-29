@@ -6,6 +6,9 @@ function buildAllowedOrigins() {
     process.env.ADMIN_ORIGIN,
     process.env.SITE_ORIGIN,
     ...(process.env.CORS_ORIGINS || "").split(","),
+    "https://bskkmrj.in",
+    "https://www.bskkmrj.in",
+    "https://admin.bskkmrj.in",
   ]
     .map((value) => String(value || "").trim())
     .filter(Boolean);
