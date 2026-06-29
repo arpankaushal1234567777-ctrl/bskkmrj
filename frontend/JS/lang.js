@@ -120,7 +120,7 @@
       footerHeadline1: "Empty beds available in Lohia Hospital, UP",
       footerHeadline2: "No worker will face exploitation in the country",
       footerHeadline3: "All workers to be registered: Sarvesh Pathak",
-      footerTagline: "Bharatiya Shramik Kamgar Karmachari Mahasangh Rajasthan",
+      footerTagline: "Bharatiya Shramik Kamgar Karamchari Mahasangh Rajasthan",
       footerContactLink: "Get in touch",
       heroTagline: "Bharatiya Shramik Kamgar Karmachari Mahasangh Rajasthan",
       heroHeading: "BSKKMRJ",
