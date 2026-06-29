@@ -9,7 +9,6 @@ async function connectDb(uri) {
     throw new Error("MONGODB_URI is not set in environment.");
   }
   mongoose.set("strictQuery", true);
-  mongoose.set("sanitizeFilter", true);
   connectionPromise = mongoose.connect(mongoUri).then(() => {
     // connected
     return mongoose.connection;
