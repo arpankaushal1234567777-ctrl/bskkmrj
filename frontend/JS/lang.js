@@ -122,7 +122,7 @@
       footerHeadline3: "All workers to be registered: Sarvesh Pathak",
       footerTagline: "Bharatiya Shramik Kamgar Karamchari Mahasangh Rajasthan",
       footerContactLink: "Get in touch",
-      heroTagline: "Bharatiya Shramik Kamgar Karmachari Mahasangh Rajasthan",
+      heroTagline: "Bharatiya Shramik Kamgar Karamchari Mahasangh Rajasthan",
       heroHeading: "BSKKMRJ",
       heroQuote: "\"Indian Workers Union: a vital engine for progress\"",
       ctaAbout: "About Us",
