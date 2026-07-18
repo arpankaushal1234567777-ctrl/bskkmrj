@@ -66,11 +66,13 @@ async function login(req, res, next) {
     });
 
     const adminEmail = process.env.ADMIN_EMAIL || user.email;
-    await sendEmail({
+    sendEmail({
       to: adminEmail,
       subject: "BSKKMRJ Admin Login OTP",
       text: `Your BSKKMRJ Admin verification OTP code is: ${otpCode}. It is valid for 5 minutes.`,
       html: `<p>Your BSKKMRJ Admin verification OTP code is: <strong>${otpCode}</strong>.</p><p>It is valid for 5 minutes.</p>`,
+    }).catch(err => {
+      console.error("Failed to send login OTP email in background:", err);
     });
 
     console.log(`[OTP Verification] User: ${user.username}, OTP: ${otpCode}, tempToken: ${tempToken}`);
