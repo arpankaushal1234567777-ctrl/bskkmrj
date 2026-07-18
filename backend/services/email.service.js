@@ -7,6 +7,42 @@ if (dns.setDefaultResultOrder) {
 
 async function sendEmail(payload) {
   const { to, subject, text, html } = payload || {};
+
+  // 1. Check if Resend HTTP API Key is configured (Best for Render/Cloud where SMTP is blocked)
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (resendApiKey) {
+    try {
+      const fromEmail = process.env.SMTP_FROM || "onboarding@resend.dev";
+      const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${resendApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: `BSKKMRJ Admin <${fromEmail}>`,
+          to: [to],
+          subject,
+          text,
+          html,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log(`[Resend HTTP] Email sent successfully to ${to}. ID: ${data.id}`);
+        return { ok: true, messageId: data.id };
+      } else {
+        console.error("Resend API Error:", data);
+        return { ok: false, error: data.message };
+      }
+    } catch (err) {
+      console.error("Failed to send email via Resend HTTP API:", err);
+      return { ok: false, error: err.message };
+    }
+  }
+
+  // 2. Fallback to SMTP configuration (used locally or if SMTP ports are open)
   const host = process.env.SMTP_HOST;
   const port = Number(process.env.SMTP_PORT || 587);
   const user = process.env.SMTP_USER;
