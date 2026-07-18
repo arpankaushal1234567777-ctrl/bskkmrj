@@ -78,7 +78,7 @@ async function login(req, res, next) {
       expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
     });
 
-    const adminEmail = process.env.ADMIN_EMAIL || user.email;
+    const adminEmail = user.email;
     sendEmail({
       to: adminEmail,
       subject: "BSKKMRJ Admin Login OTP",
