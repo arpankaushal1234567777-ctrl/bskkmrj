@@ -28,7 +28,10 @@ async function sendEmail(payload) {
       port,
       secure: port === 465,
       auth: { user, pass },
-      family: 4, // Force IPv4 only (bypasses Render IPv6 route blocks)
+      family: 4, // Force IPv4 only
+      connectionTimeout: 10000, // 10 seconds timeout
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
     });
 
     const info = await transporter.sendMail({
