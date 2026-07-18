@@ -14,18 +14,31 @@ const {
 
 async function ensureAdminSeeded() {
   await connectDb();
-  const adminEmail = sanitizeEmail(process.env.ADMIN_EMAIL || "admin@local");
-  const adminUsername = sanitizeText(process.env.ADMIN_USERNAME || process.env.ADMIN_EMAIL || "admin", 100).toLowerCase();
   const adminPassword = process.env.ADMIN_PASSWORD;
 
   if (!adminPassword) {
     throw new Error("ADMIN_PASSWORD must be set in environment");
   }
 
-  const existing = await User.findOne({ $or: [{ email: adminEmail }, { username: adminUsername }] });
-  if (existing) return;
-  const passwordHash = await bcrypt.hash(adminPassword, 10);
-  await User.create({ email: adminEmail, username: adminUsername, passwordHash, role: "admin" });
+  const rawEmails = process.env.ADMIN_EMAIL || "admin@local";
+  const emails = rawEmails.split(",").map(e => e.trim()).filter(Boolean);
+
+  for (const rawEmail of emails) {
+    const email = sanitizeEmail(rawEmail);
+    let username = email.toLowerCase();
+    
+    // Maintain backward compatibility for single admin username config
+    if (emails.length === 1 && process.env.ADMIN_USERNAME) {
+      username = sanitizeText(process.env.ADMIN_USERNAME, 100).toLowerCase();
+    }
+
+    const existing = await User.findOne({ $or: [{ email }, { username }] });
+    if (!existing) {
+      const passwordHash = await bcrypt.hash(adminPassword, 10);
+      await User.create({ email, username, passwordHash, role: "admin" });
+      console.log(`[Admin Seeding] Seeded new administrator: ${email} (username: ${username})`);
+    }
+  }
 }
 
 async function login(req, res, next) {
