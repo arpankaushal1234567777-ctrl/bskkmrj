@@ -16,19 +16,31 @@
       </header>
 
       <form id="loginForm" class="form" autocomplete="off">
-        <label>
-          <span>Username or Email</span>
-          <input type="text" name="identifier" required placeholder="admin" />
-        </label>
-        <label>
-          <span>Password</span>
-          <input type="password" name="password" required minlength="6" placeholder="12345678" />
-        </label>
-        <label class="checkbox">
-          <input type="checkbox" name="rememberMe" />
-          <span>Remember me</span>
-        </label>
-        <button type="submit" class="btn btn-primary">Sign in</button>
+        <div id="credentialsFields">
+          <label>
+            <span>Username or Email</span>
+            <input type="text" name="identifier" required placeholder="admin" />
+          </label>
+          <label>
+            <span>Password</span>
+            <input type="password" name="password" required minlength="6" placeholder="12345678" />
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" name="rememberMe" />
+            <span>Remember me</span>
+          </label>
+          <button type="submit" class="btn btn-primary">Sign in</button>
+        </div>
+
+        <div id="otpFields" hidden>
+          <p class="form-info" style="margin-bottom:16px; color:var(--text-muted); font-size:14px; text-align:center;">An OTP code has been sent to your email.</p>
+          <label>
+            <span>Verification Code (OTP)</span>
+            <input type="text" id="otpCode" name="otp" placeholder="123456" maxlength="6" pattern="\d{6}" />
+          </label>
+          <button type="button" id="otpVerifyBtn" class="btn btn-primary">Confirm Code</button>
+        </div>
+
         <p id="loginError" class="form-error" hidden></p>
       </form>
 

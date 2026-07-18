@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const { User } = require("../models/User");
 const { connectDb } = require("../config/db");
 const { AdminSession } = require("../models/adminSession");
+const { OtpVerification } = require("../models/otpVerification");
+const { sendEmail } = require("../services/email.service");
 const crypto = require("crypto");
 const {
   parseBoolean,
@@ -53,6 +55,60 @@ async function login(req, res, next) {
     const ok = await bcrypt.compare(pass, user.passwordHash);
     if (!ok) return res.status(401).json({ error: "Invalid credentials." });
 
+    const otpCode = crypto.randomInt ? crypto.randomInt(100000, 999999).toString() : String(Math.floor(100000 + Math.random() * 900000));
+    const tempToken = crypto.randomBytes(32).toString("hex");
+
+    await OtpVerification.create({
+      userId: user._id,
+      tempToken,
+      code: otpCode,
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
+    });
+
+    const adminEmail = process.env.ADMIN_EMAIL || user.email;
+    await sendEmail({
+      to: adminEmail,
+      subject: "BSKKMRJ Admin Login OTP",
+      text: `Your BSKKMRJ Admin verification OTP code is: ${otpCode}. It is valid for 5 minutes.`,
+      html: `<p>Your BSKKMRJ Admin verification OTP code is: <strong>${otpCode}</strong>.</p><p>It is valid for 5 minutes.</p>`,
+    });
+
+    console.log(`[OTP Verification] User: ${user.username}, OTP: ${otpCode}, tempToken: ${tempToken}`);
+
+    res.json({ status: "otp_sent", tempToken, rememberMe: parseBoolean(rememberMe) });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function verifyOtp(req, res, next) {
+  try {
+    const { tempToken, code, rememberMe } = req.body || {};
+    if (!tempToken || !code) {
+      return res.status(400).json({ error: "tempToken and OTP code are required" });
+    }
+
+    const verification = await OtpVerification.findOne({ tempToken });
+    if (!verification) {
+      return res.status(400).json({ error: "Invalid or expired verification session." });
+    }
+
+    if (verification.code !== String(code).trim()) {
+      return res.status(400).json({ error: "Invalid OTP code." });
+    }
+
+    await OtpVerification.deleteOne({ _id: verification._id });
+
+    const user = await User.findById(verification.userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw new Error("JWT_SECRET must be set in environment");
+    }
+
     const expiresIn = parseBoolean(rememberMe) ? "30d" : "12h";
     const jti = crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(16).toString("hex");
     const payload = { id: user._id, email: user.email, username: user.username, role: user.role, jti };
@@ -91,4 +147,4 @@ async function logout(req, res, next) {
   }
 }
 
-module.exports = { login, me, logout };
+module.exports = { login, verifyOtp, me, logout };
