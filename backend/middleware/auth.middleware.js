@@ -17,7 +17,7 @@ async function requireAuth(req, res, next) {
       return res.status(500).json({ error: "Server misconfiguration: JWT secret missing" });
     }
 
-    const payload = jwt.verify(token, secret);
+    const payload = jwt.verify(token, secret, { algorithms: ["HS256"] });
     if (!payload?.jti) {
       return res.status(401).json({ error: "Invalid or expired token" });
     }
@@ -40,7 +40,7 @@ async function optionalAuth(req, _res, next) {
   try {
     const secret = process.env.JWT_SECRET;
     if (!secret) return next();
-    const payload = jwt.verify(token, secret);
+    const payload = jwt.verify(token, secret, { algorithms: ["HS256"] });
     if (!payload?.jti) return next();
     const session = await AdminSession.findOne({ jti: payload.jti }).lean();
     if (!session || session.revokedAt || new Date(session.expiresAt).getTime() <= Date.now()) return next();

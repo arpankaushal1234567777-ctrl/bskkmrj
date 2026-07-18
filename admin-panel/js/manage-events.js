@@ -31,6 +31,11 @@
     renderTable();
   }
 
+  function escapeHtml(text) {
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+    return String(text || "").replace(/[&<>"']/g, m => map[m]);
+  }
+
   function renderTable() {
     if (!tableHost) return;
     if (!rows.length) {
@@ -47,9 +52,9 @@
             .map(
               (e) => `
               <tr data-id="${e._id || ""}">
-                <td>${e.title}</td>
-                <td>${e.date}</td>
-                <td>${e.location || ""}</td>
+                <td>${escapeHtml(e.title)}</td>
+                <td>${escapeHtml(e.date)}</td>
+                <td>${escapeHtml(e.location || "")}</td>
                 <td>
                   <div class="table-actions">
                     <button type="button" class="btn btn-secondary btn-sm" data-action="edit">Edit</button>

@@ -56,7 +56,7 @@ async function login(req, res, next) {
     const expiresIn = parseBoolean(rememberMe) ? "30d" : "12h";
     const jti = crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(16).toString("hex");
     const payload = { id: user._id, email: user.email, username: user.username, role: user.role, jti };
-    const token = jwt.sign(payload, jwtSecret, { expiresIn });
+    const token = jwt.sign(payload, jwtSecret, { expiresIn, algorithm: "HS256" });
 
     const decoded = jwt.decode(token);
     const expMs = decoded?.exp ? decoded.exp * 1000 : Date.now() + 12 * 60 * 60 * 1000;

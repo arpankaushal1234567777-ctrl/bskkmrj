@@ -57,8 +57,19 @@ function createAuthLimiter() {
   });
 }
 
+function createPublicSubmissionLimiter() {
+  return rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour window
+    max: Number(process.env.SUBMISSION_RATE_LIMIT_MAX || 5), // max 5 submissions per hour
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Too many submissions. Please try again later." },
+  });
+}
+
 module.exports = {
   buildAllowedOrigins,
   createAuthLimiter,
+  createPublicSubmissionLimiter,
   createCorsOptions,
 };

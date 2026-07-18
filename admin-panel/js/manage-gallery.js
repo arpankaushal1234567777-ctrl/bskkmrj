@@ -30,6 +30,11 @@
     renderTable();
   }
 
+  function escapeHtml(text) {
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+    return String(text || "").replace(/[&<>"']/g, m => map[m]);
+  }
+
   function renderTable() {
     if (!tableHost) return;
     if (!rows.length) {
@@ -40,10 +45,10 @@
       .map(
         (g) => `
         <tr data-id="${g._id || ""}">
-          <td>${g.title}</td>
-          <td>${g.date}</td>
-          <td>${(g.description || "").slice(0, 60)}</td>
-          <td>${g.imageUrl ? `<a href="${g.imageUrl}" target="_blank">View</a>` : ""}</td>
+          <td>${escapeHtml(g.title)}</td>
+          <td>${escapeHtml(g.date)}</td>
+          <td>${escapeHtml((g.description || "").slice(0, 60))}</td>
+          <td>${g.imageUrl ? `<a href="${escapeHtml(g.imageUrl)}" target="_blank">View</a>` : ""}</td>
           <td>
             <div class="table-actions">
               <button type="button" class="btn btn-secondary btn-sm" data-action="edit">Edit</button>

@@ -25,6 +25,11 @@
     renderTable();
   }
 
+  function escapeHtml(text) {
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+    return String(text || "").replace(/[&<>"']/g, m => map[m]);
+  }
+
   function renderTable() {
     if (!tableHost) return;
     if (!rows.length) {
@@ -39,9 +44,9 @@
             .map(
               (d) => `
               <tr data-id="${d._id || ""}">
-                <td>${d.title || ""}</td>
+                <td>${escapeHtml(d.title || "")}</td>
                 <td>${d.published === false ? "Unpublished" : "Published"}</td>
-                <td>${d.fileUrl ? `<a href="${d.fileUrl}" target="_blank">Open</a>` : "—"}</td>
+                <td>${d.fileUrl ? `<a href="${escapeHtml(d.fileUrl)}" target="_blank">Open</a>` : "—"}</td>
                 <td>
                   <div class="table-actions">
                     <button type="button" class="btn btn-secondary btn-sm" data-action="edit">Edit</button>

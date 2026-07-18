@@ -47,8 +47,19 @@ async function createJoinRequest(req, res, next) {
 
 async function listJoinRequests(_req, res, next) {
   try {
-    const requests = await JoinRequest.find().sort({ createdAt: -1 }).lean();
+    const requests = await JoinRequest.find().select("-aadhaar_photo").sort({ createdAt: -1 }).lean();
     res.json({ requests });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getJoinRequestPhoto(req, res, next) {
+  try {
+    assertObjectId(req.params.id, "Join request");
+    const doc = await JoinRequest.findById(req.params.id).select("aadhaar_photo").lean();
+    if (!doc) return res.status(404).json({ error: "Join request not found" });
+    res.json({ aadhaar_photo: doc.aadhaar_photo });
   } catch (err) {
     next(err);
   }
@@ -85,4 +96,4 @@ async function deleteJoinRequests(req, res, next) {
   }
 }
 
-module.exports = { createJoinRequest, listJoinRequests, updateJoinRequestStatus, deleteJoinRequests };
+module.exports = { createJoinRequest, listJoinRequests, updateJoinRequestStatus, deleteJoinRequests, getJoinRequestPhoto };

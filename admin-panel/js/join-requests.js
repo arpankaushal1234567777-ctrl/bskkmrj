@@ -6,6 +6,11 @@
   const bulkDeleteBtn = document.getElementById("bulkDeleteBtn");
   const selectedCount = document.getElementById("selectedCount");
 
+  function escapeHtml(text) {
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+    return String(text || "").replace(/[&<>"']/g, m => map[m]);
+  }
+
   function updateSelectionState() {
     const checkboxes = Array.from(tbody.querySelectorAll(".row-checkbox"));
     const selected = checkboxes.filter(cb => cb.checked);
@@ -61,15 +66,15 @@
         (r) => `
         <tr data-id="${r._id}">
           <td><input type="checkbox" class="row-checkbox" data-id="${r._id}" /></td>
-          <td>${r.name}</td>
-          <td>${r.email}</td>
-          <td>${r.phone}</td>
-          <td>${r.address || "—"}</td>
-          <td>${r.occupation || "—"}</td>
-          <td>${(r.message || "").slice(0, 40)}</td>
-          <td>${r.aadhaar_number || "—"}</td>
-          <td>${r.aadhaar_photo ? `<img src="${r.aadhaar_photo}" class="aadhaar-thumbnail" alt="Aadhaar" style="max-width:60px; max-height:60px; cursor:pointer; border-radius:4px; object-fit:cover;" />` : "—"}</td>
-          <td><span class="badge">${r.status}</span></td>
+          <td>${escapeHtml(r.name)}</td>
+          <td>${escapeHtml(r.email)}</td>
+          <td>${escapeHtml(r.phone)}</td>
+          <td>${escapeHtml(r.address || "—")}</td>
+          <td>${escapeHtml(r.occupation || "—")}</td>
+          <td>${escapeHtml((r.message || "").slice(0, 40))}</td>
+          <td>${escapeHtml(r.aadhaar_number || "—")}</td>
+          <td><button type="button" class="btn btn-secondary btn-sm" data-action="view-photo" data-id="${r._id}">View Photo</button></td>
+          <td><span class="badge">${escapeHtml(r.status)}</span></td>
           <td>
             <div class="table-actions">
               <button type="button" class="btn btn-secondary btn-sm" data-status="approved">Approve</button>
@@ -98,14 +103,31 @@
       });
     });
 
-    tbody.querySelectorAll("img.aadhaar-thumbnail").forEach((img) => {
-      img.addEventListener("click", () => {
-        const w = window.open("");
-        if (w) {
-          w.document.write(`<html><body style="margin:0; display:flex; justify-content:center; align-items:center; background:#222; min-height:100vh;"><img src="${img.src}" style="max-width:100%; max-height:100vh;" /></body></html>`);
-          w.document.close();
-        } else {
-          window.BSKKMRJ_ADMIN.showToast("Popup blocked. Please allow popups to view the image.", "error");
+    tbody.querySelectorAll('[data-action="view-photo"]').forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.dataset.id;
+        if (!id) return;
+        try {
+          btn.disabled = true;
+          btn.textContent = "Loading...";
+          const res = await window.BSKKMRJ_ADMIN.api(`/api/join/${id}/photo`);
+          const photoUrl = res?.aadhaar_photo || "";
+          if (!photoUrl) {
+            window.BSKKMRJ_ADMIN.showToast("No photo available", "error");
+            return;
+          }
+          const w = window.open("");
+          if (w) {
+            w.document.write(`<html><body style="margin:0; display:flex; justify-content:center; align-items:center; background:#222; min-height:100vh;"><img src="${photoUrl}" style="max-width:100%; max-height:100vh;" /></body></html>`);
+            w.document.close();
+          } else {
+            window.BSKKMRJ_ADMIN.showToast("Popup blocked. Please allow popups to view the image.", "error");
+          }
+        } catch (err) {
+          window.BSKKMRJ_ADMIN.showToast(err.message, "error");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "View Photo";
         }
       });
     });

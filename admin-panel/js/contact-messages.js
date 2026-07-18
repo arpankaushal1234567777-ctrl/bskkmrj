@@ -3,6 +3,11 @@
 
   const tbody = document.getElementById("messagesTableBody");
 
+  function escapeHtml(text) {
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+    return String(text || "").replace(/[&<>"']/g, m => map[m]);
+  }
+
   async function refresh() {
     await window.BSKKMRJ_ADMIN.requireAuthOrRedirect();
     window.BSKKMRJ_ADMIN.wireLogout();
@@ -17,11 +22,11 @@
       .map(
         (m) => `
         <tr data-id="${m._id}" class="${m.read ? "" : "row-unread"}">
-          <td>${m.name}</td>
-          <td>${m.email}</td>
-          <td>${m.phone || "—"}</td>
-          <td>${m.subject || "—"}</td>
-          <td>${(m.message || "").slice(0, 50)}</td>
+          <td>${escapeHtml(m.name)}</td>
+          <td>${escapeHtml(m.email)}</td>
+          <td>${escapeHtml(m.phone || "—")}</td>
+          <td>${escapeHtml(m.subject || "—")}</td>
+          <td>${escapeHtml((m.message || "").slice(0, 50))}</td>
           <td>${m.read ? "Read" : "Unread"}</td>
           <td>${new Date(m.createdAt).toLocaleString()}</td>
           <td>

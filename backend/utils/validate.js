@@ -46,6 +46,7 @@ function sanitizePhone(value) {
 function sanitizeUrl(value, { allowDataImage = false, allowPdfData = false } = {}) {
   const url = String(value ?? "").trim();
   if (!url) return "";
+  if (url.includes('"') || url.includes("'") || url.includes("<") || url.includes(">")) return "";
   if (HTTP_URL_RE.test(url)) return url.slice(0, 2048);
   if (allowDataImage && DATA_IMAGE_RE.test(url) && url.length <= MAX_DATA_URL_LENGTH) return url;
   if (allowPdfData && DATA_PDF_RE.test(url) && url.length <= MAX_DATA_URL_LENGTH) return url;

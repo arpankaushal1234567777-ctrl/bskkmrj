@@ -1,4 +1,9 @@
 (() => {
+  function escapeHtml(text) {
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+    return String(text || "").replace(/[&<>"']/g, m => map[m]);
+  }
+
   async function loadEvents() {
     const container = document.getElementById("eventsList");
     if (!container || !window.BSKKMRJ_API) return;
@@ -15,9 +20,9 @@
         .map(
           (e) => `
             <article class="card">
-              <h3>${e.title}</h3>
-              <p class="muted">${e.date}</p>
-              ${e.location ? `<p class="small muted">${e.location}</p>` : ""}
+              <h3>${escapeHtml(e.title)}</h3>
+              <p class="muted">${escapeHtml(e.date)}</p>
+              ${e.location ? `<p class="small muted">${escapeHtml(e.location)}</p>` : ""}
             </article>
           `
         )
