@@ -38,6 +38,7 @@ async function sendEmail(payload) {
       html,
     });
 
+    console.log(`[SMTP] Email sent successfully to ${to}. Message ID: ${info.messageId}`);
     return { ok: true, messageId: info.messageId };
   } catch (err) {
     console.error("Failed to send email via SMTP:", err);
